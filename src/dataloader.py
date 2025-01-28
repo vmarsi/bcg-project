@@ -51,7 +51,8 @@ class DataLoader:
         cases_and_deaths_data_name = 'cases_and_deaths_data.csv'
 
         self.populations_name = pd.read_csv(
-            os.path.join(self.data_folder_path, populations_name)
+            os.path.join(self.data_folder_path, populations_name),
+            sep=';'
         )
 
         self.cases_and_deaths_data_name = pd.read_csv(
