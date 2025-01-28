@@ -33,8 +33,8 @@ class DataLoader:
         if self.do_download:
             self.download_data()
 
-        self.populations_name = None
-        self.cases_and_deaths_data_name = None
+        self.populations = None
+        self.cases_and_deaths_data = None
         self.read_data()
 
     def download_data(self) -> None:
@@ -50,11 +50,11 @@ class DataLoader:
         populations_name = 'populations.csv'
         cases_and_deaths_data_name = 'cases_and_deaths_data.csv'
 
-        self.populations_name = pd.read_csv(
+        self.populations = pd.read_csv(
             os.path.join(self.data_folder_path, populations_name),
             sep=';'
         )
 
-        self.cases_and_deaths_data_name = pd.read_csv(
+        self.cases_and_deaths_data = pd.read_csv(
             os.path.join(self.data_folder_path, cases_and_deaths_data_name)
         )
