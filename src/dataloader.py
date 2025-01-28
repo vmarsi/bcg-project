@@ -47,7 +47,7 @@ class DataLoader:
         """
         Reads downloaded data from the data folder and saves them in member variables.
         """
-        populations_name = 'populations.xlsx'
+        populations_name = 'populations.csv'
         cases_and_deaths_data_name = 'cases_and_deaths_data.csv'
 
         self.populations_name = pd.read_csv(
