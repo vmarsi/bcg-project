@@ -2,8 +2,6 @@ import os
 
 import pandas as pd
 
-from src.data_handling.data_downloader import DataDownloader
-
 
 class DataLoader:
     """
