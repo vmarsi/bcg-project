@@ -26,9 +26,11 @@ class DataLoader:
         cases_and_deaths_data_name = 'cases_and_deaths_data.csv'
 
         self.meta_data = pd.read_csv(
-            os.path.join(self.data_folder_path, meta_name)
+            os.path.join(self.data_folder_path, meta_name),
+            index_col=[0]
         )
 
         self.time_series_data = pd.read_csv(
-            os.path.join(self.data_folder_path, cases_and_deaths_data_name)
+            os.path.join(self.data_folder_path, cases_and_deaths_data_name),
+            index_col=[0]
         )
