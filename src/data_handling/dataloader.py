@@ -22,11 +22,11 @@ class DataLoader:
         """
         Reads downloaded data from the data folder and saves them in member variables.
         """
-        populations_name = 'populations.csv'
+        meta_name = 'meta.csv'
         cases_and_deaths_data_name = 'cases_and_deaths_data.csv'
 
         self.meta_data = pd.read_csv(
-            os.path.join(self.data_folder_path, populations_name)
+            os.path.join(self.data_folder_path, meta_name)
         )
 
         self.time_series_data = pd.read_csv(
