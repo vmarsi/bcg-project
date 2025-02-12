@@ -14,8 +14,9 @@ class GroupCoordinateCreator:
         self.data_if = data_handler.data_if
         self.date = date
 
-        self.x_coordinates = []
-        self.y_coordinates = []
+        self.x_coordinates = np.array([])
+        self.y_coordinates = np.array([])
+        self.y_medians = []
 
     def run(self):
         df_over_one_mil = self.filter_over_one_million()
@@ -24,12 +25,14 @@ class GroupCoordinateCreator:
             df_over_one_mil=df_over_one_mil
         )
 
+        self.get_y_medians()
+
     def filter_over_one_million(self) -> pd.DataFrame:
         df_over_one_mil = self.dl.meta_data[self.dl.meta_data['Population'] >= 1000000]
 
         return df_over_one_mil
 
-    def get_coordinates(self, df_over_one_mil: pd.DataFrame) -> Tuple[list, list]:
+    def get_coordinates(self, df_over_one_mil: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         group1, group2, group3 = self.get_groups(df_over_one_mil=df_over_one_mil)
 
         grouped_countries = list(group1.index) + list(group2.index) + list(group3.index)
@@ -37,7 +40,7 @@ class GroupCoordinateCreator:
         x_coordinates = self.get_x_coordinates(group1=group1, group2=group2, group3=group3)
         y_coordinates = self.get_y_coordinates(grouped_countries=grouped_countries)
 
-        return x_coordinates, y_coordinates
+        return np.array(x_coordinates), np.array(y_coordinates)
 
     def get_y_coordinates(self, grouped_countries: list) -> list:
         date_obj = datetime.strptime(self.date, '%Y-%m-%d')
@@ -79,3 +82,14 @@ class GroupCoordinateCreator:
         x_coordinates = group1_coordinates + group2_coordinates + group3_coordinates
 
         return x_coordinates
+
+    def get_y_medians(self) -> None:
+        cutting_points = [0, 4, 8, 12]
+
+        y_medians = []
+        for i, j in zip(cutting_points[:-1], cutting_points[1:]):
+            y_cut = self.y_coordinates[(i < self.x_coordinates) & (self.x_coordinates <= j)]
+
+            y_medians.append(np.median(y_cut))
+
+        self.y_medians = y_medians
