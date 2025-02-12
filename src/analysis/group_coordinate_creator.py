@@ -32,7 +32,7 @@ class GroupCoordinateCreator:
     def get_coordinates(self, df_over_one_mil: pd.DataFrame) -> Tuple[list, list]:
         group1, group2, group3 = self.get_groups(df_over_one_mil=df_over_one_mil)
 
-        grouped_countries = group1['Country'].to_list() + group2['Country'].to_list() + group3['Country'].to_list()
+        grouped_countries = list(group1.index) + list(group2.index) + list(group3.index)
 
         x_coordinates = self.get_x_coordinates(group1=group1, group2=group2, group3=group3)
         y_coordinates = self.get_y_coordinates(grouped_countries=grouped_countries)
