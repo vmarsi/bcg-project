@@ -14,6 +14,9 @@ class DataHandler:
     def run(self) -> None:
         countries_inter = self.get_countries_intersection()
         self.dl.meta_data = self.dl.meta_data.loc[countries_inter]
+        self.dl.meta_data['Population'] = self.dl.meta_data['Population'].apply(
+            lambda x: float(str(x).replace(',', ''))
+        )
         self.dl.time_series_data = self.dl.time_series_data[
             self.dl.time_series_data['Country'].isin(countries_inter)
         ]
@@ -40,11 +43,7 @@ class DataHandler:
         for country in countries_inter:
             country_df = self.dl.time_series_data[self.dl.time_series_data['Country'] == country]
 
-            pop = float(
-                str(
-                    self.dl.meta_data.loc[country]['Population']
-                ).replace(',', '')
-            )
+            pop = self.dl.meta_data.loc[country]['Population']
 
             values = np.array(
                 country_df[f'Cumulative_{data_type}'].values.tolist()[::period]
