@@ -15,8 +15,10 @@ class DataHandler:
         countries_inter = self.get_countries_intersection()
 
         data = {
-            'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases'),
-            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths')
+            'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases',
+                                    period=7),
+            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths',
+                                     period=7)
         }
 
         self.data_if = DataInterface(data=data)
@@ -27,18 +29,23 @@ class DataHandler:
 
         return list(set(countries).intersection(set(countries_2)))
 
-    def get_df(self, countries_inter: list, data_type: str):
-        date_range = pd.date_range(start='2020-01-04', end='2025-01-12', freq='7D')
+    def get_df(self, countries_inter: list, data_type: str, period: int):
+        date_range = pd.date_range(start='2020-01-04', end='2025-01-12', freq=f'{period}D')
 
         df = pd.DataFrame(index=date_range)
         for country in countries_inter:
-            df = self.dl.time_series_data[self.dl.time_series_data['Country'] == country]
+            country_df = self.dl.time_series_data[self.dl.time_series_data['Country'] == country]
+
             pop = float(
                 str(
                     self.dl.meta_data[self.dl.meta_data['Country'] == country].values[0][2]
                 ).replace(',', '')
             )
-            values = np.array(df[f'Cumulative_{data_type}'].values.to_list()[::7]) / pop * 1000000
+
+            values = np.array(
+                country_df[f'Cumulative_{data_type}'].values.to_list()[::period]
+            ) / pop * 1000000
+
             df[country] = values
 
         return df
