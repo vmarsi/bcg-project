@@ -72,22 +72,6 @@ class GroupCoordinateCreator:
 
         return np.array(x_coordinates), np.array(y_coordinates)
 
-    def get_y_coordinates(self, grouped_countries: list) -> list:
-        """
-        Gets the y coordinates (cases or deaths per million inhabitants).
-        :param list grouped_countries: all country names in a list in a specific order
-        (countries in the same group are next to each other)
-        :return list: y coordinates in the same order as grouped_countries
-        """
-        date_obj = datetime.strptime(self.date, '%Y-%m-%d')
-        final_date = date_obj + timedelta(days=6)
-        y_coordinates = []
-        for country in grouped_countries:
-            y = self.data[country][self.date:final_date].values[0]
-            y_coordinates.append(y)
-
-        return y_coordinates
-
     @staticmethod
     def get_groups(df_over_one_mil: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
@@ -103,19 +87,35 @@ class GroupCoordinateCreator:
         group1 = df_over_one_mil[
             (df_over_one_mil['income'] == 2) & (
                     df_over_one_mil['bcg_policy'].astype('int') == 1)
-        ]
+            ]
 
         group2 = df_over_one_mil[
             ((df_over_one_mil['income'] == 3) | (df_over_one_mil['income'] == 4)) & (
                     df_over_one_mil['bcg_policy'].astype('int') == 1)
-        ]
+            ]
 
         group3 = df_over_one_mil[
             ((df_over_one_mil['income'] == 3) | (df_over_one_mil['income'] == 4)) & (
                     df_over_one_mil['bcg_policy'].astype('int') == 3)
-        ]
+            ]
 
         return group1, group2, group3
+
+    def get_y_coordinates(self, grouped_countries: list) -> list:
+        """
+        Gets the y coordinates (cases or deaths per million inhabitants).
+        :param list grouped_countries: all country names in a list in a specific order
+        (countries in the same group are next to each other)
+        :return list: y coordinates in the same order as grouped_countries
+        """
+        date_obj = datetime.strptime(self.date, '%Y-%m-%d')
+        final_date = date_obj + timedelta(days=6)
+        y_coordinates = []
+        for country in grouped_countries:
+            y = self.data[country][self.date:final_date].values[0]
+            y_coordinates.append(y)
+
+        return y_coordinates
 
     @staticmethod
     def get_x_coordinates(group1: pd.DataFrame, group2: pd.DataFrame, group3: pd.DataFrame) -> list:
