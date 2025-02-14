@@ -47,7 +47,7 @@ class GroupCoordinateCreator:
         final_date = date_obj + timedelta(days=6)
         y_coordinates = []
         for country in grouped_countries:
-            y = self.data_if.deaths_df[country][self.date:final_date].values[0]
+            y = self.data_if.cases_df[country][self.date:final_date].values[0]
             y_coordinates.append(y)
 
         return y_coordinates
