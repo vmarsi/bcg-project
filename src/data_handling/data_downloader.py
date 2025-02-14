@@ -36,10 +36,8 @@ class DataDownloader:
     def do_all_files_exist() -> bool:
         """
         This function checks whether all the files we wish to download already exist
-
         :return bool: True if all of them exist, False if at least one is missing
         """
-
         files = ["cases_and_deaths_data.csv", "meta.csv"]
 
         for file in files:
