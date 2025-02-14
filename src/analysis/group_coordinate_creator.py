@@ -72,6 +72,55 @@ class GroupCoordinateCreator:
 
         return np.array(x_coordinates), np.array(y_coordinates)
 
+    def get_y_coordinates(self, grouped_countries: list) -> list:
+        """
+        Gets the y coordinates (cases or deaths per million inhabitants).
+        :param list grouped_countries: all country names in a list in a specific order
+        (countries in the same group are next to each other)
+        :return list: y coordinates in the same order as grouped_countries
+        """
+        date_obj = datetime.strptime(self.date, '%Y-%m-%d')
+        final_date = date_obj + timedelta(days=6)
+        y_coordinates = []
+        for country in grouped_countries:
+            y = self.data[country][self.date:final_date].values[0]
+            y_coordinates.append(y)
+
+        return y_coordinates
+
+    def get_y_medians(self) -> None:
+        """
+        Gets the medians of the y values in each group.
+        """
+        cutting_points = [0, 4, 8, 12]
+
+        y_medians = []
+        for i, j in zip(cutting_points[:-1], cutting_points[1:]):
+            y_cut = self.y_coordinates[(i < self.x_coordinates) & (self.x_coordinates <= j)]
+
+            y_medians.append(np.median(y_cut))
+
+        self.y_medians = y_medians
+
+    @staticmethod
+    def get_x_coordinates(group1: pd.DataFrame, group2: pd.DataFrame, group3: pd.DataFrame) -> list:
+        """
+        Generates random x coordinates inside the groups.
+        :param pd.DataFrame group1: group 1 described in the docstring of get_groups()
+        :param pd.DataFrame group2: group 2 described in the docstring of get_groups()
+        :param pd.DataFrame group3: group 3 described in the docstring of get_groups()
+        :return list: x coordinates
+        """
+        x_range = np.linspace(0, 12, 1201)
+
+        group1_coordinates = random.choices(x_range[150:351], k=len(group1))
+        group2_coordinates = random.choices(x_range[500:701], k=len(group2))
+        group3_coordinates = random.choices(x_range[850:1051], k=len(group3))
+
+        x_coordinates = group1_coordinates + group2_coordinates + group3_coordinates
+
+        return x_coordinates
+
     @staticmethod
     def get_groups(df_over_one_mil: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
@@ -100,52 +149,3 @@ class GroupCoordinateCreator:
             ]
 
         return group1, group2, group3
-
-    def get_y_coordinates(self, grouped_countries: list) -> list:
-        """
-        Gets the y coordinates (cases or deaths per million inhabitants).
-        :param list grouped_countries: all country names in a list in a specific order
-        (countries in the same group are next to each other)
-        :return list: y coordinates in the same order as grouped_countries
-        """
-        date_obj = datetime.strptime(self.date, '%Y-%m-%d')
-        final_date = date_obj + timedelta(days=6)
-        y_coordinates = []
-        for country in grouped_countries:
-            y = self.data[country][self.date:final_date].values[0]
-            y_coordinates.append(y)
-
-        return y_coordinates
-
-    @staticmethod
-    def get_x_coordinates(group1: pd.DataFrame, group2: pd.DataFrame, group3: pd.DataFrame) -> list:
-        """
-        Generates random x coordinates inside the groups.
-        :param pd.DataFrame group1: group 1 described in the docstring of get_groups()
-        :param pd.DataFrame group2: group 2 described in the docstring of get_groups()
-        :param pd.DataFrame group3: group 3 described in the docstring of get_groups()
-        :return list: x coordinates
-        """
-        x_range = np.linspace(0, 12, 1201)
-
-        group1_coordinates = random.choices(x_range[150:351], k=len(group1))
-        group2_coordinates = random.choices(x_range[500:701], k=len(group2))
-        group3_coordinates = random.choices(x_range[850:1051], k=len(group3))
-
-        x_coordinates = group1_coordinates + group2_coordinates + group3_coordinates
-
-        return x_coordinates
-
-    def get_y_medians(self) -> None:
-        """
-        Gets the medians of the y values in each group.
-        """
-        cutting_points = [0, 4, 8, 12]
-
-        y_medians = []
-        for i, j in zip(cutting_points[:-1], cutting_points[1:]):
-            y_cut = self.y_coordinates[(i < self.x_coordinates) & (self.x_coordinates <= j)]
-
-            y_medians.append(np.median(y_cut))
-
-        self.y_medians = y_medians
