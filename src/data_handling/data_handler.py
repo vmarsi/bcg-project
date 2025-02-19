@@ -17,6 +17,8 @@ class DataHandler:
         self.dl = dl
 
         self.data_if = DataInterface()
+        self.bcg_index_dict = {}
+        self.bcg_index_similar_dict = {}
 
     def run(self) -> None:
         """
@@ -32,9 +34,13 @@ class DataHandler:
             self.dl.time_series_data['Country'].isin(countries_inter)
         ]
 
+        self.create_bcg_index_dicts()
+
         data = {
             'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases'),
-            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths')
+            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths'),
+            'bcg_index_dict': self.bcg_index_dict,
+            'bcg_index_similar_dict': self.bcg_index_similar_dict
         }
 
         self.data_if = DataInterface(data=data)
@@ -73,3 +79,8 @@ class DataHandler:
         df = pd.DataFrame(np.array(all_values).T, index=date_range, columns=countries_inter)
 
         return df
+
+    def create_bcg_index_dicts(self):
+        self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
+        self.bcg_index_similar_dict = (
+            self.dl.bcg_index_similar_countries['BCG Index    0-1'][:-1].to_dict())
