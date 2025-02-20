@@ -38,7 +38,7 @@ class DataDownloader:
         This function checks whether all the files we wish to download already exist
         :return bool: True if all of them exist, False if at least one is missing
         """
-        files = ["cases_and_deaths_data.csv", "meta.csv"]
+        files = ["cases_and_deaths_data.csv", "meta.csv", "bcg_index_article_data.xlsx"]
 
         for file in files:
             if not os.path.exists(os.path.join(PROJECT_PATH, 'data', file)):

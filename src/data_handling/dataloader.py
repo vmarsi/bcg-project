@@ -14,8 +14,10 @@ class DataLoader:
         """
         self.data_folder_path = data_folder_path
 
-        self.meta_data = None
-        self.time_series_data = None
+        self.meta_data = pd.DataFrame()
+        self.time_series_data = pd.DataFrame()
+        self.bcg_index = pd.DataFrame()
+        self.bcg_index_similar_countries = pd.DataFrame()
         self.load_data()
 
     def load_data(self) -> None:
@@ -24,6 +26,7 @@ class DataLoader:
         """
         meta_name = 'meta.csv'
         cases_and_deaths_data_name = 'cases_and_deaths_data.csv'
+        bcg_index_file_name = 'bcg_index_article_data.xlsx'
 
         self.meta_data = pd.read_csv(
             os.path.join(self.data_folder_path, meta_name),
@@ -32,5 +35,17 @@ class DataLoader:
 
         self.time_series_data = pd.read_csv(
             os.path.join(self.data_folder_path, cases_and_deaths_data_name),
+            index_col=[0]
+        )
+
+        self.bcg_index = pd.read_excel(
+            os.path.join(self.data_folder_path, bcg_index_file_name),
+            sheet_name='BCG Index',
+            index_col=[0]
+        )
+
+        self.bcg_index_similar_countries = pd.read_excel(
+            os.path.join(self.data_folder_path, bcg_index_file_name),
+            sheet_name='BCG Index Similar Countries',
             index_col=[0]
         )

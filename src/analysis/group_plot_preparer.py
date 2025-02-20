@@ -8,7 +8,7 @@ import pandas as pd
 from src.data_handling.data_handler import DataHandler
 
 
-class GroupCoordinateCreator:
+class GroupPlotPreparer:
     """
     This is a helper class for plotting cases or deaths data grouped by some factors.
     """
