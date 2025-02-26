@@ -6,14 +6,25 @@ from src.data_handling.dataloader import DataLoader
 
 
 class JohnsHopkinsDataHandler:
+    """
+    Class for preprocessing the Johns Hopkins data.
+    """
     def __init__(self, dl: DataLoader):
+        """
+        Constructor.
+        :param DataLoader dl: a DataLoader instance
+        """
         self.dl = dl
 
         self.data_if = DataInterface()
         self.bcg_index_dict = {}
         self.bcg_index_similar_dict = {}
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Run function. Selects countries for which we have all necessary information, gets two
+        dataframes, one containing cases data, the other containing deaths data.
+        """
         self.preprocess_df()
 
         countries_inter = self.get_common_countries()
@@ -31,7 +42,11 @@ class JohnsHopkinsDataHandler:
 
         self.data_if = DataInterface(data=data)
 
-    def preprocess_df(self):
+    def preprocess_df(self) -> None:
+        """
+        Creates two dataframes, one containing cases, the other containing deaths data.
+        Indices are dates, columns are countries.
+        """
         for data_type in ['cases', 'deaths']:
             df = self.dl.time_series_data[data_type].drop(['Province/State', 'Lat', 'Long'], axis=1)
             df_summed = df.groupby(df.index).sum()
@@ -43,7 +58,11 @@ class JohnsHopkinsDataHandler:
 
             self.dl.time_series_data[data_type] = df_transposed
 
-    def get_common_countries(self):
+    def get_common_countries(self) -> list:
+        """
+        Gets countries for which we have all necessary data.
+        :return list: list of countries we can work with
+        """
         countries = set(self.dl.time_series_data['cases'].columns)
         countries_2 = set(self.dl.meta_data.index)
 
@@ -51,7 +70,11 @@ class JohnsHopkinsDataHandler:
 
         return countries_inter
 
-    def filter_data(self, countries_inter: list):
+    def filter_data(self, countries_inter: list) -> None:
+        """
+        Filters all data for common countries.
+        :param list countries_inter: common countries
+        """
         self.dl.meta_data = self.dl.meta_data.loc[countries_inter]
         self.dl.meta_data['Population'] = self.dl.meta_data['Population'].apply(
             lambda x: float(str(x).replace(',', ''))
@@ -62,7 +85,7 @@ class JohnsHopkinsDataHandler:
 
     def get_df(self, countries_inter: list, data_type: str) -> pd.DataFrame:
         """
-        Gets the desired dataframe. Indices are dates and columns are countries.
+        Gets the normalized dataframe. Indices are dates and columns are countries.
         :param list countries_inter: countries for which we have all necessary data
         :param str data_type: either 'cases' or 'deaths'
         :return pd.DataFrame: the desired dataframe
@@ -85,7 +108,11 @@ class JohnsHopkinsDataHandler:
 
         return df
 
-    def create_bcg_index_dicts(self):
+    def create_bcg_index_dicts(self) -> None:
+        """
+        Creates two dictionaries, one containing the BCG indices of all countries,
+        the other only containing the BCG indices of similar countries.
+        """
         self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
         self.bcg_index_dict.pop('Russian Federation')
         self.bcg_index_dict.pop('Uzbekistan')

@@ -7,7 +7,7 @@ from src.data_handling.dataloader import DataLoader
 
 class WHODataHandler:
     """
-    Class for preprocessing the downloaded data.
+    Class for preprocessing the WHO data.
     """
     def __init__(self, dl: DataLoader):
         """
@@ -50,7 +50,11 @@ class WHODataHandler:
 
         return list(countries.intersection(countries_2))
 
-    def filter_data(self, countries_inter: list):
+    def filter_data(self, countries_inter: list) -> None:
+        """
+        Filters all data for common countries.
+        :param list countries_inter: common countries
+        """
         self.dl.meta_data = self.dl.meta_data.loc[countries_inter]
         self.dl.meta_data['Population'] = self.dl.meta_data['Population'].apply(
             lambda x: float(str(x).replace(',', ''))
@@ -61,7 +65,7 @@ class WHODataHandler:
 
     def get_df(self, countries_inter: list, data_type: str) -> pd.DataFrame:
         """
-        Gets the desired dataframe. Indices are dates and columns are countries.
+        Gets the normalized dataframe. Indices are dates and columns are countries.
         :param list countries_inter: countries for which we have all necessary data
         :param str data_type: either 'cases' or 'deaths'
         :return pd.DataFrame: the desired dataframe
@@ -84,7 +88,11 @@ class WHODataHandler:
 
         return df
 
-    def create_bcg_index_dicts(self):
+    def create_bcg_index_dicts(self) -> None:
+        """
+        Creates two dictionaries, one containing the BCG indices of all countries,
+        the other only containing the BCG indices of similar countries.
+        """
         self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
         self.bcg_index_dict.pop('Turkey')
         self.bcg_index_dict.pop('Russian Federation')
