@@ -5,17 +5,17 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from src.data_handling.data_handler import DataHandler
+from src.data_handling.who_data_handler import WHODataHandler
 
 
 class GroupPlotPreparer:
     """
     This is a helper class for plotting cases or deaths data grouped by some factors.
     """
-    def __init__(self, data_handler: DataHandler, date: str, data_type: str):
+    def __init__(self, data_handler: WHODataHandler, date: str, data_type: str):
         """
         Constructor.
-        :param DataHandler data_handler: a DataHandler instance
+        :param WHODataHandler data_handler: a DataHandler instance
         :param str date: we only consider data on this day
         :param str data_type: either 'cases' or 'deaths'
         """

@@ -5,7 +5,7 @@ from src.data_handling.data_interface import DataInterface
 from src.data_handling.dataloader import DataLoader
 
 
-class DataHandler:
+class WHODataHandler:
     """
     Class for preprocessing the downloaded data.
     """
@@ -25,14 +25,9 @@ class DataHandler:
         Run function. Selects countries for which we have all necessary information, gets two
         dataframes, one containing cases data, the other containing deaths data.
         """
-        countries_inter = self.get_countries_intersection()
-        self.dl.meta_data = self.dl.meta_data.loc[countries_inter]
-        self.dl.meta_data['Population'] = self.dl.meta_data['Population'].apply(
-            lambda x: float(str(x).replace(',', ''))
-        )
-        self.dl.time_series_data = self.dl.time_series_data[
-            self.dl.time_series_data['Country'].isin(countries_inter)
-        ]
+        countries_inter = self.get_common_countries()
+
+        self.filter_data(countries_inter=countries_inter)
 
         self.create_bcg_index_dicts()
 
@@ -45,7 +40,7 @@ class DataHandler:
 
         self.data_if = DataInterface(data=data)
 
-    def get_countries_intersection(self) -> list:
+    def get_common_countries(self) -> list:
         """
         Gets countries for which we have all necessary data.
         :return list: list of countries we can work with
@@ -54,6 +49,15 @@ class DataHandler:
         countries_2 = set(self.dl.meta_data.index)
 
         return list(countries.intersection(countries_2))
+
+    def filter_data(self, countries_inter: list):
+        self.dl.meta_data = self.dl.meta_data.loc[countries_inter]
+        self.dl.meta_data['Population'] = self.dl.meta_data['Population'].apply(
+            lambda x: float(str(x).replace(',', ''))
+        )
+        self.dl.time_series_data = self.dl.time_series_data[
+            self.dl.time_series_data['Country'].isin(countries_inter)
+        ]
 
     def get_df(self, countries_inter: list, data_type: str) -> pd.DataFrame:
         """
