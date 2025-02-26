@@ -67,7 +67,7 @@ class JohnsHopkinsDataHandler:
         :param str data_type: either 'cases' or 'deaths'
         :return pd.DataFrame: the desired dataframe
         """
-        date_range = pd.date_range(start='2020-01-22', end='2023-03-09', freq='7D')
+        date_range = pd.date_range(start='2020-01-22', end='2023-03-09', freq='1D')
 
         all_values = []
         for country in countries_inter:
@@ -76,7 +76,7 @@ class JohnsHopkinsDataHandler:
             pop = self.dl.meta_data.loc[country]['Population']
 
             values = np.array(
-                country_df.values.tolist()[::7]
+                country_df.values.tolist()
             ) / pop * 1000000
 
             all_values.append(values)

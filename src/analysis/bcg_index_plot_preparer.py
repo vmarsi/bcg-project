@@ -10,12 +10,12 @@ class BCGIndexPlotPreparer:
     This class prepares everything for the BCG index - deaths/million correlation plot.
     """
     def __init__(self, data_if: DataInterface, countries_type: str,
-                 weeks_after_alignment: int, prepare_for_log_plot: bool):
+                 days_after_alignment: int, prepare_for_log_plot: bool):
         """
         Constructor.
         :param DataInterface data_if: a DataInterface instance
         :param str countries_type: either 'all' or 'similar'
-        :param int weeks_after_alignment: deaths/million data will be collected this many weeks
+        :param int days_after_alignment: deaths/million data will be collected this many days
         after the alignment (alignment means each country's data start from the first nonzero element)
         :param bool prepare_for_log_plot: True if we wish to create a plot with logarithmic y-axis,
         False if not
@@ -28,7 +28,7 @@ class BCGIndexPlotPreparer:
         else:
             raise Exception('Incorrect type of countries (all/similar).')
 
-        self.weeks_after_alignment = weeks_after_alignment
+        self.days_after_alignment = days_after_alignment
         self.prepare_for_log_plot = prepare_for_log_plot
 
         self.x_coordinates = np.array([])
@@ -70,7 +70,7 @@ class BCGIndexPlotPreparer:
         """
         y_coordinates = []
         for country in aligned_data.columns:
-            y = aligned_data[country][self.weeks_after_alignment]
+            y = aligned_data[country][self.days_after_alignment]
             y_coordinates.append(y)
 
         return np.array(y_coordinates)

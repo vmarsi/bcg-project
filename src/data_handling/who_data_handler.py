@@ -66,7 +66,7 @@ class WHODataHandler:
         :param str data_type: either 'cases' or 'deaths'
         :return pd.DataFrame: the desired dataframe
         """
-        date_range = pd.date_range(start='2020-01-04', end='2025-01-12', freq='7D')
+        date_range = pd.date_range(start='2020-01-04', end='2025-01-12', freq='1D')
 
         all_values = []
         for country in countries_inter:
@@ -75,7 +75,7 @@ class WHODataHandler:
             pop = self.dl.meta_data.loc[country]['Population']
 
             values = np.array(
-                country_df[f'Cumulative_{data_type}'].values.tolist()[::7]
+                country_df[f'Cumulative_{data_type}'].values.tolist()
             ) / pop * 1000000
 
             all_values.append(values)
