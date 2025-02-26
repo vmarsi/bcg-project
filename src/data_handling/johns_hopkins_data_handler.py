@@ -1,12 +1,15 @@
 import numpy as np
 import pandas as pd
 
+from src.data_handling.data_interface import DataInterface
 from src.data_handling.dataloader import DataLoader
 
 
 class JohnsHopkinsDataHandler:
     def __init__(self, dl: DataLoader):
         self.dl = dl
+
+        self.data_if = DataInterface()
 
     def run(self):
         self.preprocess_df()
@@ -20,7 +23,7 @@ class JohnsHopkinsDataHandler:
             'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths')
         }
 
-        print(data)
+        self.data_if = DataInterface(data=data)
 
     def preprocess_df(self):
         for data_type in ['cases', 'deaths']:
