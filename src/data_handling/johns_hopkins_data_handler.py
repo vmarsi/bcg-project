@@ -10,6 +10,8 @@ class JohnsHopkinsDataHandler:
         self.dl = dl
 
         self.data_if = DataInterface()
+        self.bcg_index_dict = {}
+        self.bcg_index_similar_dict = {}
 
     def run(self):
         self.preprocess_df()
@@ -20,7 +22,9 @@ class JohnsHopkinsDataHandler:
 
         data = {
             'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases'),
-            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths')
+            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths'),
+            'bcg_index_dict': self.bcg_index_dict,
+            'bcg_index_similar_dict': self.bcg_index_similar_dict
         }
 
         self.data_if = DataInterface(data=data)
@@ -78,3 +82,9 @@ class JohnsHopkinsDataHandler:
         df = pd.DataFrame(np.array(all_values).T, index=date_range, columns=countries_inter)
 
         return df
+
+    def create_bcg_index_dicts(self):
+        self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
+
+        self.bcg_index_similar_dict = (
+            self.dl.bcg_index_similar_countries['Corrected BCG Index'][:-1].to_dict())
