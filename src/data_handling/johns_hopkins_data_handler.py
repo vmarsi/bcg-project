@@ -88,6 +88,7 @@ class JohnsHopkinsDataHandler:
     def create_bcg_index_dicts(self):
         self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
         self.bcg_index_dict.pop('Russian Federation')
+        self.bcg_index_dict.pop('Uzbekistan')
 
         self.bcg_index_similar_dict = (
             self.dl.bcg_index_similar_countries['Corrected BCG Index'][:-1].to_dict())
