@@ -17,8 +17,8 @@ class JohnsHopkinsDataHandler:
         self.dl = dl
 
         self.data_if = DataInterface()
-        self.bcg_index_dict = {}
-        self.bcg_index_similar_dict = {}
+        self.index_all_countries_dict = {}
+        self.index_similar_countries_dict = {}
 
     def run(self) -> None:
         """
@@ -36,8 +36,8 @@ class JohnsHopkinsDataHandler:
         data = {
             'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases'),
             'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths'),
-            'bcg_index_dict': self.bcg_index_dict,
-            'bcg_index_similar_dict': self.bcg_index_similar_dict
+            'index_all_countries_dict': self.index_all_countries_dict,
+            'index_similar_countries_dict': self.index_similar_countries_dict
         }
 
         self.data_if = DataInterface(data=data)
@@ -110,12 +110,18 @@ class JohnsHopkinsDataHandler:
 
     def create_bcg_index_dicts(self) -> None:
         """
-        Creates two dictionaries, one containing the BCG indices of all countries,
-        the other only containing the BCG indices of similar countries.
+        If the index type is BCG, then this function creates two dictionaries. One containing
+        BCG indices for all countries, the other containing BCG indices for similar countries.
+        If the index type is vodka, then this function creates one dictionary containing
+        vodka consumption indices for similar countries.
         """
-        self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
-        self.bcg_index_dict.pop('Russian Federation')
-        self.bcg_index_dict.pop('Uzbekistan')
+        if self.dl.index_type == 'BCG':
+            self.index_all_countries_dict = self.dl.index_all_countries['BCG Index.  0 to 1'][:-1].to_dict()
+            self.index_all_countries_dict.pop('Uzbekistan')
 
-        self.bcg_index_similar_dict = (
-            self.dl.bcg_index_similar_countries['Corrected BCG Index'][:-1].to_dict())
+            self.index_similar_countries_dict = (
+                self.dl.index_similar_countries['Corrected BCG Index'][:-1].to_dict())
+        else:
+            df = self.dl.index_similar_countries
+            df_normalized = (df-df.min())/(df.max()-df.min())
+            self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
