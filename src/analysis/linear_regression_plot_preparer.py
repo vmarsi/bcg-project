@@ -55,12 +55,12 @@ class LinearRegressionPlotPreparer:
     def filter_data(self) -> pd.DataFrame:
         """
         Filters the dataframe containing the time series for only those countries that
-        are in the list of keys of self.bcg_index.
+        are in the list of keys of self.index.
         :return pd.DataFrame: the filtered dataframe
         """
-        countries_with_bcg_index = list(self.index.keys())
+        countries_with_index = list(self.index.keys())
 
-        return self.deaths_df[countries_with_bcg_index]
+        return self.deaths_df[countries_with_index]
 
     def get_y_coordinates(self, aligned_data: pd.DataFrame) -> np.ndarray:
         """
