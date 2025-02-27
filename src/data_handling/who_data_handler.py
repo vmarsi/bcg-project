@@ -91,12 +91,12 @@ class WHODataHandler:
 
     def create_bcg_index_dicts(self) -> None:
         """
-        If the index type is bcg, then this function creates two dictionaries. One containing
+        If the index type is BCG, then this function creates two dictionaries. One containing
         BCG indices for all countries, the other containing BCG indices for similar countries.
         If the index type is vodka, then this function creates one dictionary containing
         vodka consumption indices for similar countries.
         """
-        if self.dl.index_type == 'bcg':
+        if self.dl.index_type == 'BCG':
             self.index_all_countries_dict = self.dl.index_all_countries['BCG Index.  0 to 1'][:-1].to_dict()
             self.index_all_countries_dict.pop('Uzbekistan')
 

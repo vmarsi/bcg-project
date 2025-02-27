@@ -13,7 +13,7 @@ class DataLoader:
         Constructor.
         :param str data_folder_path: path of the data folder
         :param str dataset_origin: either 'who' or 'johns_hopkins'
-        :param str index_type: either 'bcg' or 'vodka'
+        :param str index_type: either 'BCG' or 'vodka'
         """
         self.data_folder_path = data_folder_path
         self.dataset_origin = dataset_origin
@@ -63,7 +63,7 @@ class DataLoader:
         else:
             raise Exception('Name of dataset can only be who or johns_hopkins')
 
-        if self.index_type == 'bcg':
+        if self.index_type == 'BCG':
             self.index_all_countries = pd.read_excel(
                 os.path.join(self.data_folder_path, bcg_index_name),
                 sheet_name='BCG Index',
