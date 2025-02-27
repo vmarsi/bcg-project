@@ -80,4 +80,4 @@ class DataLoader:
                 index_col=[0]
             )
         else:
-            raise Exception('Type of index can only be bcg or vodka')
+            raise Exception('Type of index can only be BCG or vodka')
