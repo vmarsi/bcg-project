@@ -5,9 +5,9 @@ from scipy.stats import linregress
 from src.data_handling.data_interface import DataInterface
 
 
-class BCGIndexPlotPreparer:
+class LinearRegressionPlotPreparer:
     """
-    This class prepares everything for the BCG index - deaths/million correlation plot.
+    This class prepares everything for the BCG or vodka index - deaths/million linear regression plot.
     """
     def __init__(self, data_if: DataInterface, countries_type: str,
                  days_after_alignment: int, prepare_for_log_plot: bool):
@@ -22,9 +22,9 @@ class BCGIndexPlotPreparer:
         """
         self.deaths_df = data_if.deaths_df
         if countries_type == 'all':
-            self.bcg_index = data_if.bcg_index_dict
+            self.index = data_if.index_all_countries_dict
         elif countries_type == 'similar':
-            self.bcg_index = data_if.bcg_index_similar_dict
+            self.index = data_if.index_similar_countries_dict
         else:
             raise Exception('Incorrect type of countries (all/similar).')
 
@@ -47,7 +47,7 @@ class BCGIndexPlotPreparer:
 
         aligned_data = self.align_data(data=deaths_df_filtered)
 
-        self.x_coordinates = np.array(list(self.bcg_index.values()))
+        self.x_coordinates = np.array(list(self.index.values()))
         self.y_coordinates = self.get_y_coordinates(aligned_data=aligned_data)
 
         self.do_linear_regression()
@@ -58,7 +58,7 @@ class BCGIndexPlotPreparer:
         are in the list of keys of self.bcg_index.
         :return pd.DataFrame: the filtered dataframe
         """
-        countries_with_bcg_index = list(self.bcg_index.keys())
+        countries_with_bcg_index = list(self.index.keys())
 
         return self.deaths_df[countries_with_bcg_index]
 
