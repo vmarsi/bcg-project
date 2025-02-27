@@ -103,4 +103,5 @@ class WHODataHandler:
             self.index_similar_countries_dict = (
                 self.dl.index_similar_countries['Corrected BCG Index'][:-1].to_dict())
         else:
-            self.index_similar_countries_dict = self.dl.index_similar_countries.to_dict()
+            df = self.dl.index_similar_countries
+            self.index_similar_countries_dict = (df - df.min()) / (df.max() - df.min()).to_dict()
