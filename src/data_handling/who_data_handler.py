@@ -85,6 +85,7 @@ class WHODataHandler:
             all_values.append(values)
 
         df = pd.DataFrame(np.array(all_values).T, index=date_range, columns=countries_inter)
+        df.rename(columns={'Russian Federation': 'Russia'})
 
         return df
 
@@ -95,7 +96,6 @@ class WHODataHandler:
         """
         self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
         self.bcg_index_dict.pop('Turkey')
-        self.bcg_index_dict.pop('Russian Federation')
         self.bcg_index_dict.pop('Uzbekistan')
 
         self.bcg_index_similar_dict = (

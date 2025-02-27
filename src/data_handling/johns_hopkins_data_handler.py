@@ -114,7 +114,6 @@ class JohnsHopkinsDataHandler:
         the other only containing the BCG indices of similar countries.
         """
         self.bcg_index_dict = self.dl.bcg_index['BCG Index.  0 to 1'][:-1].to_dict()
-        self.bcg_index_dict.pop('Russian Federation')
         self.bcg_index_dict.pop('Uzbekistan')
 
         self.bcg_index_similar_dict = (
