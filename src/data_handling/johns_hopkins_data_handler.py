@@ -123,4 +123,4 @@ class JohnsHopkinsDataHandler:
                 self.dl.index_similar_countries['Corrected BCG Index'][:-1].to_dict())
         else:
             df = self.dl.index_similar_countries
-            self.index_similar_countries_dict = (df-df.min())/(df.max()-df.min()).to_dict()
+            self.index_similar_countries_dict = (df-df.min())/(df.max()-df.min()).squeeze().to_dict()
