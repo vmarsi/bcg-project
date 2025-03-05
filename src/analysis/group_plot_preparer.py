@@ -1,3 +1,5 @@
+import json
+import os.path
 import random
 from datetime import datetime, timedelta
 from typing import Tuple
@@ -12,16 +14,19 @@ class GroupPlotPreparer:
     """
     This is a helper class for plotting cases or deaths data grouped by some factors.
     """
-    def __init__(self, data_handler: WHODataHandler, date: str, data_type: str):
+    def __init__(self, data_handler: WHODataHandler, date: str, data_type: str,
+                 data_folder_path: str):
         """
         Constructor.
         :param WHODataHandler data_handler: a DataHandler instance
         :param str date: we only consider data on this day
         :param str data_type: either 'cases' or 'deaths'
+        :param str data_folder_path: path of the data folder
         """
         self.dl = data_handler.dl
         self.date = date
         self.data_type = data_type
+        self.data_folder_path = data_folder_path
         if self.data_type == 'cases':
             self.data = data_handler.data_if.cases_df
         elif self.data_type == 'deaths':
@@ -102,22 +107,35 @@ class GroupPlotPreparer:
 
         self.y_medians = y_medians
 
-    @staticmethod
-    def get_x_coordinates(group1: pd.DataFrame, group2: pd.DataFrame, group3: pd.DataFrame) -> list:
+    def get_x_coordinates(self,
+                          group1: pd.DataFrame,
+                          group2: pd.DataFrame,
+                          group3: pd.DataFrame) -> list:
         """
-        Generates random x coordinates inside the groups.
+        Generates or reads random x coordinates inside the groups.
         :param pd.DataFrame group1: group 1 described in the docstring of get_groups()
         :param pd.DataFrame group2: group 2 described in the docstring of get_groups()
         :param pd.DataFrame group3: group 3 described in the docstring of get_groups()
         :return list: x coordinates
         """
-        x_range = np.linspace(0, 12, 1201)
+        if os.path.exists(os.path.join(self.data_folder_path, 'x_coordinates.json')):
+            with open(os.path.join(self.data_folder_path, 'x_coordinates.json'), 'r') as f:
+                x_coordinates_dict = json.load(f)
+                x_coordinates = x_coordinates_dict['coordinates']
 
-        group1_coordinates = random.choices(x_range[150:351], k=len(group1))
-        group2_coordinates = random.choices(x_range[500:701], k=len(group2))
-        group3_coordinates = random.choices(x_range[850:1051], k=len(group3))
+        else:
+            x_range = np.linspace(0, 12, 1201)
 
-        x_coordinates = group1_coordinates + group2_coordinates + group3_coordinates
+            group1_coordinates = random.choices(x_range[150:351], k=len(group1))
+            group2_coordinates = random.choices(x_range[500:701], k=len(group2))
+            group3_coordinates = random.choices(x_range[850:1051], k=len(group3))
+
+            x_coordinates = group1_coordinates + group2_coordinates + group3_coordinates
+
+            x_coordinates_dict = {'coordinates': x_coordinates}
+
+            with open(os.path.join(self.data_folder_path, 'x_coordinates.json'), 'w') as f:
+                json.dump(x_coordinates_dict, f)
 
         return x_coordinates
 
