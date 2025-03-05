@@ -25,6 +25,8 @@ class WHODataHandler:
         Run function. Selects countries for which we have all necessary information, gets two
         dataframes, one containing cases data, the other containing deaths data.
         """
+        self.dl.meta_data.rename(index={'Russia': 'Russian Federation', 'Turkey': 'Türkiye'}, inplace=True)
+
         countries_inter = self.get_common_countries()
 
         self.filter_data(countries_inter=countries_inter)
@@ -38,6 +40,8 @@ class WHODataHandler:
             'index_similar_countries_dict': self.index_similar_countries_dict
         }
 
+        self.dl.meta_data.rename(index={'Russian Federation': 'Russia', 'Türkiye': 'Turkey'}, inplace=True)
+
         self.data_if = DataInterface(data=data)
 
     def get_common_countries(self) -> list:
@@ -45,7 +49,6 @@ class WHODataHandler:
         Gets countries for which we have all necessary data.
         :return list: list of countries we can work with
         """
-        self.dl.meta_data.rename(index={'Russia': 'Russian Federation', 'Turkey': 'Türkiye'}, inplace=True)
         countries = set(self.dl.time_series_data['Country'].values)
         countries_2 = set(self.dl.meta_data.index)
 
@@ -87,7 +90,6 @@ class WHODataHandler:
 
         df = pd.DataFrame(np.array(all_values).T, index=date_range, columns=countries_inter)
         df.rename(columns={'Russian Federation': 'Russia', 'Türkiye': 'Turkey'}, inplace=True)
-        self.dl.meta_data.rename(index={'Russian Federation': 'Russia', 'Türkiye': 'Turkey'}, inplace=True)
 
         return df
 
