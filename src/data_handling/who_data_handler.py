@@ -87,8 +87,7 @@ class WHODataHandler:
 
         df = pd.DataFrame(np.array(all_values).T, index=date_range, columns=countries_inter)
         df.rename(columns={'Russian Federation': 'Russia', 'Türkiye': 'Turkey'}, inplace=True)
-        self.dl.meta_data.replace('Russian Federation', 'Russia')
-        self.dl.meta_data.replace('Türkiye', 'Turkey')
+        self.dl.meta_data.rename(index={'Russian Federation': 'Russia', 'Türkiye': 'Turkey'}, inplace=True)
 
         return df
 
