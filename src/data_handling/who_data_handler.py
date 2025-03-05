@@ -45,6 +45,8 @@ class WHODataHandler:
         Gets countries for which we have all necessary data.
         :return list: list of countries we can work with
         """
+        self.dl.meta_data.replace('Russia', 'Russian Federation')
+        self.dl.meta_data.replace('Turkey', 'Türkiye')
         countries = set(self.dl.time_series_data['Country'].values)
         countries_2 = set(self.dl.meta_data.index)
 
@@ -86,6 +88,8 @@ class WHODataHandler:
 
         df = pd.DataFrame(np.array(all_values).T, index=date_range, columns=countries_inter)
         df.rename(columns={'Russian Federation': 'Russia', 'Türkiye': 'Turkey'})
+        self.dl.meta_data.replace('Russian Federation', 'Russia')
+        self.dl.meta_data.replace('Türkiye', 'Turkey')
 
         return df
 
