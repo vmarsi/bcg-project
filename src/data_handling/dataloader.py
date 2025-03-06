@@ -8,7 +8,7 @@ class DataLoader:
     Class for loading downloaded data.
     """
     def __init__(self, data_folder_path: str,
-                 dataset_origin: str, index_type: str):
+                 dataset_origin: str, index_type: str = None):
         """
         Constructor.
         :param str data_folder_path: path of the data folder
@@ -53,12 +53,12 @@ class DataLoader:
                 'deaths': pd.read_csv(os.path.join(self.data_folder_path, johns_hopkins_deaths_name),
                                       index_col=[1])
             }
-            meta = self.index_all_countries = pd.read_excel(
+            self.index_all_countries = pd.read_excel(
                 os.path.join(self.data_folder_path, bcg_index_name),
                 sheet_name='Coarse',
                 index_col=[1]
             )
-            population_meta = meta[['population_2018']]
+            population_meta = self.index_all_countries[['population_2018']]
             self.meta_data = population_meta[~population_meta.index.duplicated(keep='first')]
             self.meta_data.columns = ['Population']
         elif self.dataset_origin == 'euromomo':
@@ -85,5 +85,7 @@ class DataLoader:
                 os.path.join(self.data_folder_path, vodka_consumption_name),
                 index_col=[0]
             )
+        elif self.index_type is None:
+            pass
         else:
             raise Exception('Type of index can only be BCG or vodka')

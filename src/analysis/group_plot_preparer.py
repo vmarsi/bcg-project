@@ -69,7 +69,7 @@ class GroupPlotPreparer:
         """
         group1, group2, group3 = self.get_groups(df_over_one_mil=df_over_one_mil)
 
-        grouped_countries = list(group1.index) + list(group2.index) + list(group3.index)
+        grouped_countries = group1 + group2 + group3
 
         x_coordinates = self.get_x_coordinates(group1=group1, group2=group2, group3=group3)
         y_coordinates = self.get_y_coordinates(grouped_countries=grouped_countries)
@@ -104,15 +104,12 @@ class GroupPlotPreparer:
 
         self.y_medians = y_medians
 
-    def get_x_coordinates(self,
-                          group1: pd.DataFrame,
-                          group2: pd.DataFrame,
-                          group3: pd.DataFrame) -> list:
+    def get_x_coordinates(self, group1: list, group2: list, group3: list) -> list:
         """
         Generates or reads random x coordinates inside the groups.
-        :param pd.DataFrame group1: group 1 described in the docstring of get_groups()
-        :param pd.DataFrame group2: group 2 described in the docstring of get_groups()
-        :param pd.DataFrame group3: group 3 described in the docstring of get_groups()
+        :param list group1: group 1 described in the docstring of get_groups()
+        :param list group2: group 2 described in the docstring of get_groups()
+        :param list group3: group 3 described in the docstring of get_groups()
         :return list: x coordinates
         """
         if os.path.exists(os.path.join(self.data_folder_path, 'x_coordinates.json')):
@@ -137,7 +134,7 @@ class GroupPlotPreparer:
         return x_coordinates
 
     @staticmethod
-    def get_groups(df_over_one_mil: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def get_groups(df_over_one_mil: pd.DataFrame) -> Tuple[list, list, list]:
         """
         Groups countries based on their income level and BCG policy.
         - group 1: lower middle income countries with universal BCG policy
@@ -146,7 +143,7 @@ class GroupPlotPreparer:
         BCG policy
         :param pd.DataFrame df_over_one_mil: dataframe containing data only for countries with
         more than one million inhabitants
-        :return Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        :return Tuple[list, list, list]: lists of country names in different groups
         """
         group1 = df_over_one_mil[
             (df_over_one_mil['income'] == 2) & (
@@ -163,4 +160,4 @@ class GroupPlotPreparer:
                     df_over_one_mil['bcg_policy'].astype('int') == 3)
             ]
 
-        return group1, group2, group3
+        return list(group1.index), list(group2.index), list(group3.index)
