@@ -12,7 +12,7 @@ class DataLoader:
         """
         Constructor.
         :param str data_folder_path: path of the data folder
-        :param str dataset_origin: either 'who' or 'johns_hopkins'
+        :param str dataset_origin: 'who', 'johns_hopkins' or 'euromomo'
         :param str index_type: either 'BCG' or 'vodka'
         """
         self.data_folder_path = data_folder_path
@@ -35,6 +35,7 @@ class DataLoader:
         johns_hopkins_deaths_name = 'johns_hopkins_deaths.csv'
         bcg_index_name = 'bcg_index_article_data.xlsx'
         vodka_consumption_name = 'vodka_consumption.csv'
+        excess_deaths_name = 'excess_deaths.csv'
 
         if self.dataset_origin == 'who':
             self.time_series_data = pd.read_csv(
@@ -60,8 +61,13 @@ class DataLoader:
             population_meta = meta[['population_2018']]
             self.meta_data = population_meta[~population_meta.index.duplicated(keep='first')]
             self.meta_data.columns = ['Population']
+        elif self.dataset_origin == 'euromomo':
+            self.time_series_data = pd.read_csv(
+                os.path.join(self.data_folder_path, excess_deaths_name),
+                sep=';'
+            )
         else:
-            raise Exception('Name of dataset can only be who or johns_hopkins')
+            raise Exception('Dataset origin is not valid.')
 
         if self.index_type == 'BCG':
             self.index_all_countries = pd.read_excel(

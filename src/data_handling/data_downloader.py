@@ -39,7 +39,8 @@ class DataDownloader:
         :return bool: True if all of them exist, False if at least one is missing
         """
         files = ['who_cases_and_deaths.csv', 'johns_hopkins_cases.csv', 'johns_hopkins_deaths.csv',
-                 'meta.csv', 'bcg_index_article_data.xlsx', 'vodka_consumption.csv']
+                 'meta.csv', 'bcg_index_article_data.xlsx', 'vodka_consumption.csv',
+                 'excess_deaths.csv']
 
         for file in files:
             if not os.path.exists(os.path.join(PROJECT_PATH, 'data', file)):
