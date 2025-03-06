@@ -5,23 +5,23 @@ from typing import Tuple
 
 import numpy as np
 
-from src.data_handling.euromomo_data_handler import EUROMOMODataHandler
+from src.data_handling.data_interface import DataInterface
 
 
 class ExcessDeathsPlotPreparer:
     """
     This is a helper class for plotting the excess deaths.
     """
-    def __init__(self, data_handler: EUROMOMODataHandler,
+    def __init__(self, data_if: DataInterface,
                  year: str, week: int, data_folder_path: str):
         """
         Constructor.
-        :param EUROMOMODataHandler data_handler: a EUROMOMODataHandler instance
+        :param DataInterface data_if: a DataInterface instance
         :param str year: year as a string
         :param int week: week of the year
         :param str data_folder_path: path of the data folder
         """
-        self.data = data_handler.data_if.deaths_df
+        self.data = data_if.deaths_df
         week_str = str(week) if week >= 10 else f'0{week}'
         self.week_date = year + '-' + week_str
         self.data_folder_path = data_folder_path
