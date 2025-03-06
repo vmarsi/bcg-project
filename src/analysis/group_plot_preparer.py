@@ -84,11 +84,9 @@ class GroupPlotPreparer:
         (countries in the same group are next to each other)
         :return list: y coordinates in the same order as grouped_countries
         """
-        date_obj = datetime.strptime(self.date, '%Y-%m-%d')
-        final_date = date_obj + timedelta(days=6)
         y_coordinates = []
         for country in grouped_countries:
-            y = self.data[country][self.date:final_date].values[0]
+            y = self.data[country][self.date]
             y_coordinates.append(y)
 
         return y_coordinates
