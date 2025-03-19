@@ -38,6 +38,7 @@ class LinearRegressionPlotPreparer:
         self.y_fit = np.array([])
         self.slope = float()
         self.intercept = float()
+        self.r_squared = float()
 
     def run(self) -> None:
         """
@@ -54,6 +55,8 @@ class LinearRegressionPlotPreparer:
         self.country_names = list(self.index.keys())
 
         self.do_linear_regression()
+
+        self.get_r_squared()
 
     def filter_data(self) -> pd.DataFrame:
         """
@@ -97,6 +100,22 @@ class LinearRegressionPlotPreparer:
             self.y_fit = np.exp(self.slope * self.x_fit + self.intercept)
         else:
             self.y_fit = self.slope * self.x_fit + self.intercept
+
+    def get_r_squared(self) -> None:
+        """
+        Gets R^2 of the regression line.
+        """
+        fit_values = []
+        for x in self.x_coordinates:
+            if self.prepare_for_log_plot:
+                fit_values.append(np.exp(self.slope * x + self.intercept))
+            else:
+                fit_values.append(self.slope * x + self.intercept)
+
+        numerator = np.sum((self.y_coordinates - fit_values) ** 2)
+        denominator = np.sum((self.y_coordinates - np.mean(self.y_coordinates)) ** 2)
+
+        self.r_squared = 1 - numerator / denominator
 
     @staticmethod
     def align_data(data: pd.DataFrame) -> pd.DataFrame:
