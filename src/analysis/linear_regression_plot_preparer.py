@@ -33,6 +33,7 @@ class LinearRegressionPlotPreparer:
 
         self.x_coordinates = np.array([])
         self.y_coordinates = np.array([])
+        self.country_names = []
         self.x_fit = np.array([])
         self.y_fit = np.array([])
         self.slope = float()
@@ -49,6 +50,8 @@ class LinearRegressionPlotPreparer:
 
         self.x_coordinates = np.array(list(self.index.values()))
         self.y_coordinates = self.get_y_coordinates(aligned_data=aligned_data)
+
+        self.country_names = list(self.index.keys())
 
         self.do_linear_regression()
 
