@@ -116,11 +116,14 @@ class JohnsHopkinsDataHandler:
         vodka consumption indices for similar countries.
         """
         if self.dl.index_type == 'BCG':
-            self.index_all_countries_dict = self.dl.index_all_countries['BCG Index.  0 to 1'][:-1].to_dict()
-            self.index_all_countries_dict.pop('Uzbekistan')
+            # Remove Uzbekistan, Latvia and Romania with the [:-4]
+            bcg_index_df = self.dl.index_all_countries['Corrected BCG Index'][:-4]
+            normalized_bcg_index_df = bcg_index_df / max(bcg_index_df)
+            self.index_all_countries_dict = normalized_bcg_index_df.to_dict()
 
-            self.index_similar_countries_dict = (
-                self.dl.index_similar_countries['Corrected BCG Index'][:-1].to_dict())
+            similar_bcg_index = self.dl.index_similar_countries['Corrected BCG Index'][:-1]
+            normalized_similar_bcg_index_df = similar_bcg_index / max(similar_bcg_index)
+            self.index_similar_countries_dict = normalized_similar_bcg_index_df.to_dict()
         else:
             df = self.dl.index_similar_countries
             df_normalized = (df-df.min())/(df.max()-df.min())
