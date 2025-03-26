@@ -49,7 +49,7 @@ class LinearRegressionPlotPreparer:
 
         aligned_data = self.align_data(data=deaths_df_filtered)
 
-        self.x_coordinates = np.array(list(self.index.values())) ** 0.5
+        self.x_coordinates = np.array(list(self.index.values()))
         self.y_coordinates = self.get_y_coordinates(aligned_data=aligned_data)
 
         self.country_names = list(self.index.keys())
