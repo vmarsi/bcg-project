@@ -126,5 +126,6 @@ class JohnsHopkinsDataHandler:
             self.index_similar_countries_dict = normalized_similar_bcg_index_df.to_dict()
         else:
             df = self.dl.index_similar_countries
+            df['vodka_consumption'] = np.log2(df['vodka_consumption'])
             df_normalized = (df-df.min())/(df.max()-df.min())
             self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
