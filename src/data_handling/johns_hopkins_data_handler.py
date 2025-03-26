@@ -31,7 +31,7 @@ class JohnsHopkinsDataHandler:
 
         self.filter_data(countries_inter=countries_inter)
 
-        self.create_bcg_index_dicts()
+        self.create_index_dicts()
 
         data = {
             'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases'),
@@ -108,7 +108,7 @@ class JohnsHopkinsDataHandler:
 
         return df
 
-    def create_bcg_index_dicts(self) -> None:
+    def create_index_dicts(self) -> None:
         """
         If the index type is BCG, then this function creates two dictionaries. One containing
         BCG indices for all countries, the other containing BCG indices for similar countries.
