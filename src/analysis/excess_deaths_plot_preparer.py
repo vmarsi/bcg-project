@@ -29,6 +29,7 @@ class ExcessDeathsPlotPreparer:
         self.x_coordinates = np.array([])
         self.y_coordinates = np.array([])
         self.y_medians = []
+        self.country_names = []
 
     def run(self) -> None:
         """
@@ -47,10 +48,10 @@ class ExcessDeathsPlotPreparer:
         group1 = ['Greece', 'Estonia', 'Ireland', 'Portugal', 'Hungary']
         group2 = ['Belgium', 'Italy', 'Netherlands']
 
-        grouped_countries = group1 + group2
+        self.country_names = group1 + group2
 
         x_coordinates = self.get_x_coordinates(group1=group1, group2=group2)
-        y_coordinates = self.get_y_coordinates(grouped_countries=grouped_countries)
+        y_coordinates = self.get_y_coordinates()
 
         return np.array(x_coordinates), np.array(y_coordinates)
 
@@ -81,15 +82,13 @@ class ExcessDeathsPlotPreparer:
 
         return x_coordinates
 
-    def get_y_coordinates(self, grouped_countries: list) -> list:
+    def get_y_coordinates(self) -> list:
         """
         Gets the y coordinates (excess deaths).
-        :param list grouped_countries: all country names in a list in a specific order
-        (countries in the same group are next to each other)
-        :return list: y coordinates in the same order as grouped_countries
+        :return list: y coordinates in the same order as self.country_names
         """
         y_coordinates = []
-        for country in grouped_countries:
+        for country in self.country_names:
             y = self.data[country][self.week_date]
             y_coordinates.append(y)
 
