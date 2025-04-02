@@ -9,12 +9,14 @@ class JohnsHopkinsDataHandler:
     """
     Class for preprocessing the Johns Hopkins data.
     """
-    def __init__(self, dl: DataLoader):
+    def __init__(self, dl: DataLoader, take_log_of_vodka: bool = False):
         """
         Constructor.
         :param DataLoader dl: a DataLoader instance
+        :param bool take_log_of_vodka: whether to take the logarithm of the vodka indices or not
         """
         self.dl = dl
+        self.take_log_vodka = take_log_of_vodka
 
         self.data_if = DataInterface()
         self.index_all_countries_dict = {}
@@ -126,7 +128,8 @@ class JohnsHopkinsDataHandler:
             self.index_similar_countries_dict = normalized_similar_bcg_index_df.to_dict()
         elif self.dl.index_type == 'vodka':
             df = self.dl.index_similar_countries
-            df['vodka_consumption'] = np.log2(df['vodka_consumption'])
+            if self.take_log_vodka:
+                df['vodka_consumption'] = np.log2(df['vodka_consumption'])
             df_normalized = (df-df.min())/(df.max()-df.min())
             self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
         else:
