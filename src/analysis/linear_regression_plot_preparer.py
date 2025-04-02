@@ -32,6 +32,8 @@ class LinearRegressionPlotPreparer:
         self.save_aligned = save_aligned
         self.data_folder_path = data_folder_path
 
+        self.aligned_data = pd.DataFrame()
+
         self.x_coordinates = np.array([])
         self.y_coordinates = np.array([])
         self.country_names = []
@@ -41,35 +43,31 @@ class LinearRegressionPlotPreparer:
         self.intercept = float()
         self.r_squared = float()
 
-    def align_data(self) -> pd.DataFrame:
+    def align_data(self):
         """
         Filters countries and aligns data in the given dataframe. The first elements of
         the new columns are the first nonzero elements of the old columns.
-        :return pd.DataFrame: the aligned dataframe
         """
         deaths_df_filtered = self.filter_data()
 
-        aligned_data = DataAligner.align_data(data=deaths_df_filtered)
+        self.aligned_data = DataAligner.align_data(data=deaths_df_filtered)
 
         if self.save_aligned:
             DataAligner.save_aligned(
-                aligned_data=aligned_data,
+                aligned_data=self.aligned_data,
                 data_folder_path=self.data_folder_path
             )
 
-        return aligned_data
-
-    def run(self, aligned_data: pd.DataFrame, days_after_alignment: int) -> None:
+    def run(self, days_after_alignment: int) -> None:
         """
         Filters and aligns data for the given countries, gets x and y coordinates, gets the linear
         regression line and the linear regression parameters.
-        :param pd.DataFrame aligned_data: the aligned dataframe
         :param int days_after_alignment: deaths/million data will be collected this many days
         after the alignment (alignment means each country's data start from the first nonzero element)
         """
         self.x_coordinates = np.array(list(self.index.values()))
         self.y_coordinates = self.get_y_coordinates(
-            aligned_data=aligned_data,
+            aligned_data=self.aligned_data,
             days_after_alignment=days_after_alignment
         )
 
