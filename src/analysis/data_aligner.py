@@ -33,8 +33,9 @@ class DataAligner:
         :param pd.DataFrame aligned_data: the aligned dataframe
         :param str data_folder_path: path of the data folder
         """
-        os.makedirs(os.path.join(data_folder_path, 'generated'))
+        if not os.path.exists(os.path.join(data_folder_path, 'generated')):
+            os.makedirs(os.path.join(data_folder_path, 'generated'))
 
-        transposed_df = aligned_data.T
+        transposed_df = aligned_data.T.round(2)
 
         transposed_df.to_csv(data_folder_path + '/generated/' + 'aligned_values.csv')
