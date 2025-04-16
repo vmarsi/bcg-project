@@ -40,7 +40,7 @@ class DataDownloader:
         """
         files = ['who_cases_and_deaths.csv', 'johns_hopkins_cases.csv', 'johns_hopkins_deaths.csv',
                  'meta.csv', 'bcg_index_article_data.xlsx', 'vodka_consumption.csv',
-                 'excess_deaths.csv']
+                 'excess_deaths.csv', 'deaths_by_german_states.csv']
 
         for file in files:
             if not os.path.exists(os.path.join(PROJECT_PATH, 'data', file)):

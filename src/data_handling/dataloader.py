@@ -12,7 +12,7 @@ class DataLoader:
         """
         Constructor.
         :param str data_folder_path: path of the data folder
-        :param str dataset_origin: 'who', 'johns_hopkins' or 'euromomo'
+        :param str dataset_origin: 'who', 'johns_hopkins', 'euromomo' or 'rki'
         :param str index_type: either 'BCG' or 'vodka'
         """
         self.data_folder_path = data_folder_path
@@ -36,6 +36,7 @@ class DataLoader:
         bcg_index_name = 'bcg_index_article_data.xlsx'
         vodka_consumption_name = 'vodka_consumption.csv'
         excess_deaths_name = 'excess_deaths.csv'
+        germany_data_name = 'deaths_by_german_states.csv'
 
         if self.dataset_origin == 'who':
             self.time_series_data = pd.read_csv(
@@ -65,6 +66,17 @@ class DataLoader:
             self.time_series_data = pd.read_csv(
                 os.path.join(self.data_folder_path, excess_deaths_name),
                 sep=';'
+            )
+        elif self.dataset_origin == 'rki':
+            meta = pd.read_excel(
+                os.path.join(self.data_folder_path, bcg_index_name),
+                sheet_name='Germany',
+                index_col=[0]
+            )
+            self.meta_data = meta[['East-West', 'Population']]
+            self.time_series_data = pd.read_csv(
+                os.path.join(self.data_folder_path, germany_data_name),
+                index_col=[0]
             )
         else:
             raise Exception('Dataset origin is not valid.')
