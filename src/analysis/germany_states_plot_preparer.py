@@ -89,8 +89,8 @@ class GermanyStatesPlotPreparer:
         :return list: y coordinates in the same order as self.state_names
         """
         y_coordinates = []
-        for country in self.state_names:
-            y = self.data[country][self.week_date]
+        for state in self.state_names:
+            y = self.data[state][self.week_date]
             y_coordinates.append(y)
 
         return y_coordinates
