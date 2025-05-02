@@ -42,6 +42,7 @@ class LinearRegressionPlotPreparer:
         self.slope = float()
         self.intercept = float()
         self.r_squared = float()
+        self.p_value = float()
 
     def align_data(self):
         """
@@ -114,7 +115,7 @@ class LinearRegressionPlotPreparer:
         else:
             y = self.y_coordinates
 
-        self.slope, self.intercept, r_value, p_value, std_err = linregress(
+        self.slope, self.intercept, r_value, self.p_value, std_err = linregress(
             self.x_coordinates, y
         )
 
