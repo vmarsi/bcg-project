@@ -9,15 +9,19 @@ class JohnsHopkinsDataHandler:
     """
     Class for preprocessing the Johns Hopkins data.
     """
-    def __init__(self, dl: DataLoader, take_log_of_vodka: bool = False):
+    def __init__(self, dl: DataLoader,
+                 take_log_of_vodka: bool = False, stringency_date: str = None):
         """
         Constructor.
         :param DataLoader dl: a DataLoader instance
         :param bool take_log_of_vodka: whether to take the logarithm of the vodka indices or not
+        :param str stringency_date: stringency indices are extracted from this date
         """
         self.dl = dl
         self.take_log_of_vodka = take_log_of_vodka
+        self.stringency_date = stringency_date
 
+        self.countries_inter = list()
         self.data_if = DataInterface()
         self.index_all_countries_dict = {}
         self.index_similar_countries_dict = {}
@@ -29,15 +33,15 @@ class JohnsHopkinsDataHandler:
         """
         self.preprocess_df()
 
-        countries_inter = self.get_common_countries()
+        self.get_common_countries()
 
-        self.filter_data(countries_inter=countries_inter)
+        self.filter_data(countries_inter=self.countries_inter)
 
         self.create_index_dicts()
 
         data = {
-            'cases_df': self.get_df(countries_inter=countries_inter, data_type='cases'),
-            'deaths_df': self.get_df(countries_inter=countries_inter, data_type='deaths'),
+            'cases_df': self.get_df(countries_inter=self.countries_inter, data_type='cases'),
+            'deaths_df': self.get_df(countries_inter=self.countries_inter, data_type='deaths'),
             'index_all_countries_dict': self.index_all_countries_dict,
             'index_similar_countries_dict': self.index_similar_countries_dict
         }
@@ -60,17 +64,14 @@ class JohnsHopkinsDataHandler:
 
             self.dl.time_series_data[data_type] = df_transposed
 
-    def get_common_countries(self) -> list:
+    def get_common_countries(self):
         """
         Gets countries for which we have all necessary data.
-        :return list: list of countries we can work with
         """
-        countries = set(self.dl.time_series_data['cases'].columns)
+        countries = set(self.dl.time_series_data['deaths'].columns)
         countries_2 = set(self.dl.meta_data.index)
 
-        countries_inter = list(countries.intersection(countries_2))
-
-        return countries_inter
+        self.countries_inter = list(countries.intersection(countries_2))
 
     def filter_data(self, countries_inter: list) -> None:
         """
@@ -132,5 +133,19 @@ class JohnsHopkinsDataHandler:
                 df['vodka_consumption'] = np.log2(df['vodka_consumption'])
             df_normalized = (df-df.min())/(df.max()-df.min())
             self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
+        elif self.dl.index_type == 'stringency':
+            df = self.dl.index_similar_countries
+            df_t = df.T[6:-59]
+            similar_countries = ['Italy', 'Netherlands', 'Switzerland', 'Sweden', 'Germany', 'Portugal',
+                                 'Denmark', 'Poland', 'Norway', 'Hungary', 'Bulgaria', 'Finland',
+                                 'Ukraine', 'Lithuania']
+            df_similar = df_t[similar_countries]
+            df_similar.index = (
+                pd.date_range('2020-01-01', periods=len(df_similar), freq='D'))
+            df_num = df_similar.apply(pd.to_numeric, errors='coerce')
+            df_cumulated = df_num.cumsum()
+            df_selected = df_cumulated.loc[self.stringency_date]
+            df_normalized = (df_selected - df_selected.min()) / (df_selected.max() - df_selected.min())
+            self.index_similar_countries_dict = df_normalized.to_dict()
         else:
             return
