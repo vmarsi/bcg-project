@@ -11,16 +11,18 @@ class LinearRegressionPlotPreparer:
     This class prepares everything for the BCG or vodka index - deaths/million linear regression plot.
     """
     def __init__(self, data_if: DataInterface, countries_type: str,
-                 prepare_for_log_plot: bool,
+                 do_align_data: bool, prepare_for_log_plot: bool,
                  save_aligned: bool = False, data_folder_path: str = None):
         """
         Constructor.
         :param DataInterface data_if: a DataInterface instance
+        :param bool do_align_data: whether to align data or not
         :param str countries_type: either 'all' or 'similar'
         :param bool prepare_for_log_plot: True if we wish to create a plot with logarithmic y-axis,
         False if not
         """
         self.deaths_df = data_if.deaths_df
+        self.do_align_data = do_align_data
         if countries_type == 'all':
             self.index = data_if.index_all_countries_dict
         elif countries_type == 'similar':
@@ -32,8 +34,6 @@ class LinearRegressionPlotPreparer:
         self.save_aligned = save_aligned
         self.data_folder_path = data_folder_path
 
-        self.aligned_data = pd.DataFrame()
-
         self.x_coordinates = np.array([])
         self.y_coordinates = np.array([])
         self.country_names = []
@@ -44,39 +44,52 @@ class LinearRegressionPlotPreparer:
         self.r_squared = float()
         self.p_value = float()
 
-    def align_data(self):
-        """
-        Filters countries and aligns data in the given dataframe. The first elements of
-        the new columns are the first nonzero elements of the old columns.
-        """
-        deaths_df_filtered = self.filter_data()
-
-        self.aligned_data = DataAligner.align_data(data=deaths_df_filtered)
-
-        if self.save_aligned:
-            DataAligner.save_aligned(
-                aligned_data=self.aligned_data,
-                data_folder_path=self.data_folder_path
-            )
-
-    def run(self, days_after_alignment: int) -> None:
+    def run(self, days_after_alignment: int = None,
+            date: str = None) -> None:
         """
         Filters and aligns data for the given countries, gets x and y coordinates, gets the linear
         regression line and the linear regression parameters.
         :param int days_after_alignment: deaths/million data will be collected this many days
-        after the alignment (alignment means each country's data start from the first nonzero element)
+        after the alignment
+        :param str date: the date for which we want to extract the deaths from the NON-aligned df
         """
+        deaths_df_filtered = self.filter_data()
         self.x_coordinates = np.array(list(self.index.values()))
-        self.y_coordinates = self.get_y_coordinates(
-            aligned_data=self.aligned_data,
-            days_after_alignment=days_after_alignment
-        )
+
+        if self.do_align_data:
+            aligned_data = self.align_data(data=deaths_df_filtered)
+            self.y_coordinates = self.get_y_coordinates(
+                data=aligned_data,
+                days_after_alignment=days_after_alignment
+            )
+        else:
+            data = deaths_df_filtered
+            self.y_coordinates = self.get_y_coordinates(
+                data=data, date=date
+            )
 
         self.country_names = list(self.index.keys())
 
         self.do_linear_regression()
 
         self.get_r_squared()
+
+    def align_data(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        :param pd.DataFrame data: filtered deaths dataframe
+        Filters countries and aligns data in the given dataframe. The first elements of
+        the new columns are the first nonzero elements of the old columns.
+        :return pd.DataFrame aligned data
+        """
+        aligned_data = DataAligner.align_data(data=data)
+
+        if self.save_aligned:
+            DataAligner.save_aligned(
+                aligned_data=aligned_data,
+                data_folder_path=self.data_folder_path
+            )
+
+        return aligned_data
 
     def filter_data(self) -> pd.DataFrame:
         """
@@ -88,19 +101,23 @@ class LinearRegressionPlotPreparer:
 
         return self.deaths_df[countries_with_index]
 
-    @staticmethod
-    def get_y_coordinates(aligned_data: pd.DataFrame,
-                          days_after_alignment: int) -> np.ndarray:
+    def get_y_coordinates(self, data: pd.DataFrame,
+                          days_after_alignment: int = None,
+                          date: str = None) -> np.ndarray:
         """
         Gets deaths/million data for all countries for the given date.
-        :param pd.DataFrame aligned_data: the aligned dataframe
+        :param pd.DataFrame data: the dataframe (aligned or not aligned)
         :param int days_after_alignment: deaths/million data will be collected this many days
         after the alignment (alignment means each country's data start from the first nonzero element)
+        :param str date: the date for which we want to extract the deaths from the NON-aligned df
         :return np.ndarray: deaths/million data in order
         """
         y_coordinates = []
-        for country in aligned_data.columns:
-            y = aligned_data[country][days_after_alignment]
+        for country in data.columns:
+            if self.do_align_data:
+                y = data[country][days_after_alignment]
+            else:
+                y = data[country].loc[date]
             y_coordinates.append(y)
 
         return np.array(y_coordinates)
