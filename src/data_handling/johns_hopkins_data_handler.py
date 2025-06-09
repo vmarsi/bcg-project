@@ -151,11 +151,17 @@ class JohnsHopkinsDataHandler:
         Create vodka indices by loading data from vodka_consumption.csv and normalizing
         the values.
         """
-        df = self.dl.index_similar_countries
+        df_similar = self.dl.index_similar_countries
         if self.take_log_of_vodka:
-            df['vodka_consumption'] = np.log2(df['vodka_consumption'])
-        df_normalized = (df - df.min()) / (df.max() - df.min())
-        self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
+            df_similar['vodka_consumption'] = np.log2(df_similar['vodka_consumption'])
+        df_similar_normalized = (df_similar - df_similar.min()) / (df_similar.max() - df_similar.min())
+        self.index_similar_countries_dict = list(df_similar_normalized.to_dict().values())[0]
+
+        df_all = self.dl.index_all_countries
+        if self.take_log_of_vodka:
+            df_all['vodka_consumption'] = np.log2(df_all['vodka_consumption'])
+        df_all_normalized = (df_all - df_all.min()) / (df_all.max() - df_all.min())
+        self.index_all_countries_dict = list(df_all_normalized.to_dict().values())[0]
 
     def create_stringency_indices(self) -> None:
         """
