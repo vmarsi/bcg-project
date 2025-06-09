@@ -172,13 +172,7 @@ class JohnsHopkinsDataHandler:
         )
         index_creator.run()
 
-        values = list(index_creator.final_indices.values())
-        min_val = min(values)
-        max_val = max(values)
-
         if not self.stringency_similar_only:
-            self.index_all_countries_dict = \
-                {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}
+            self.index_all_countries_dict = index_creator.final_indices
         else:
-            self.index_similar_countries_dict = \
-                {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}
+            self.index_similar_countries_dict = index_creator.final_indices
