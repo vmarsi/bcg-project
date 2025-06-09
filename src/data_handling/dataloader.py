@@ -13,7 +13,7 @@ class DataLoader:
         Constructor.
         :param str data_folder_path: path of the data folder
         :param str dataset_origin: 'who', 'johns_hopkins', 'euromomo' or 'rki'
-        :param str index_type: either 'BCG' or 'vodka'
+        :param str index_type: 'BCG', 'vodka' or 'stringency'
         """
         self.data_folder_path = data_folder_path
         self.dataset_origin = dataset_origin
@@ -37,6 +37,7 @@ class DataLoader:
         vodka_consumption_name = 'vodka_consumption.csv'
         excess_deaths_name = 'excess_deaths.csv'
         germany_data_name = 'deaths_by_german_states.csv'
+        stringency_name = 'OxCGRT_stringency.csv'
 
         if self.dataset_origin == 'who':
             self.time_series_data = pd.read_csv(
@@ -97,7 +98,12 @@ class DataLoader:
                 os.path.join(self.data_folder_path, vodka_consumption_name),
                 index_col=[0]
             )
+        elif self.index_type == 'stringency':
+            self.index_all_countries = pd.read_csv(
+                os.path.join(self.data_folder_path, stringency_name),
+                index_col=[1]
+            )
         elif self.index_type is None:
             pass
         else:
-            raise Exception('Type of index can only be BCG or vodka')
+            raise Exception('Type of index can only be BCG, vodka or stringency.')
