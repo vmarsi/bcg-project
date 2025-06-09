@@ -35,6 +35,7 @@ class DataLoader:
         johns_hopkins_deaths_name = 'johns_hopkins_deaths.csv'
         bcg_index_name = 'bcg_index_article_data.xlsx'
         vodka_consumption_name = 'vodka_consumption.csv'
+        vodka_consumption_all_name = 'vodka_consumption_all.csv'
         excess_deaths_name = 'excess_deaths.csv'
         germany_data_name = 'deaths_by_german_states.csv'
         stringency_name = 'OxCGRT_stringency.csv'
@@ -96,6 +97,10 @@ class DataLoader:
         elif self.index_type == 'vodka':
             self.index_similar_countries = pd.read_csv(
                 os.path.join(self.data_folder_path, vodka_consumption_name),
+                index_col=[0]
+            )
+            self.index_all_countries = pd.read_csv(
+                os.path.join(self.data_folder_path, vodka_consumption_all_name),
                 index_col=[0]
             )
         elif self.index_type == 'stringency':
