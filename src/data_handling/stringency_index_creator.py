@@ -64,7 +64,7 @@ class StringencyIndexCreator:
             deaths_threshold_date = country_deaths[country_deaths >= 10].index.min()
 
             day_diff = (
-                (pd.to_datetime(deaths_threshold_date) - pd.to_datetime(stringency_threshold_date)).days
+                (pd.to_datetime(stringency_threshold_date) - pd.to_datetime(deaths_threshold_date)).days
             )
 
             if day_diff is np.nan:
