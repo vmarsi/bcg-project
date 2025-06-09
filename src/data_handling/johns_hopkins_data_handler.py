@@ -3,6 +3,7 @@ import pandas as pd
 
 from src.data_handling.data_interface import DataInterface
 from src.data_handling.dataloader import DataLoader
+from src.data_handling.stringency_index_creator import StringencyIndexCreator
 
 
 class JohnsHopkinsDataHandler:
@@ -20,6 +21,8 @@ class JohnsHopkinsDataHandler:
         self.dl = dl
         self.take_log_of_vodka = take_log_of_vodka
         self.stringency_date = stringency_date
+
+        self.deaths_df = pd.DataFrame()
 
         self.countries_inter = list()
         self.data_if = DataInterface()
@@ -119,33 +122,53 @@ class JohnsHopkinsDataHandler:
         vodka consumption indices for similar countries.
         """
         if self.dl.index_type == 'BCG':
-            # Remove Uzbekistan, Latvia and Romania with the [:-4]
-            bcg_index_df = self.dl.index_all_countries['Corrected BCG Index'][:-4]
-            normalized_bcg_index_df = bcg_index_df / max(bcg_index_df)
-            self.index_all_countries_dict = normalized_bcg_index_df.to_dict()
-
-            similar_bcg_index = self.dl.index_similar_countries['Corrected BCG Index'][:-1]
-            normalized_similar_bcg_index_df = similar_bcg_index / max(similar_bcg_index)
-            self.index_similar_countries_dict = normalized_similar_bcg_index_df.to_dict()
+            self.create_bcg_indices()
         elif self.dl.index_type == 'vodka':
-            df = self.dl.index_similar_countries
-            if self.take_log_of_vodka:
-                df['vodka_consumption'] = np.log2(df['vodka_consumption'])
-            df_normalized = (df-df.min())/(df.max()-df.min())
-            self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
+            self.create_vodka_indices()
         elif self.dl.index_type == 'stringency':
-            df = self.dl.index_similar_countries
-            df_t = df.T[6:-59]
-            similar_countries = ['Italy', 'Netherlands', 'Switzerland', 'Sweden', 'Germany', 'Portugal',
-                                 'Denmark', 'Poland', 'Norway', 'Hungary', 'Bulgaria', 'Finland',
-                                 'Ukraine', 'Lithuania']
-            df_similar = df_t[similar_countries]
-            df_similar.index = (
-                pd.date_range('2020-01-01', periods=len(df_similar), freq='D'))
-            df_num = df_similar.apply(pd.to_numeric, errors='coerce')
-            df_cumulated = df_num.cumsum()
-            df_selected = df_cumulated.loc[self.stringency_date]
-            df_normalized = (df_selected - df_selected.min()) / (df_selected.max() - df_selected.min())
-            self.index_similar_countries_dict = df_normalized.to_dict()
+            self.create_stringency_indices()
         else:
             return
+
+    def create_bcg_indices(self) -> None:
+        """
+        Load BCG indices for both all and similar countries from bcg_index_article_data.xlsx
+        and normalize them by dividing with the maximum (the minimum is 0).
+        """
+        # Remove Uzbekistan, Latvia and Romania with the [:-4]
+        bcg_index_df = self.dl.index_all_countries['Corrected BCG Index'][:-4]
+        normalized_bcg_index_df = bcg_index_df / max(bcg_index_df)
+        self.index_all_countries_dict = normalized_bcg_index_df.to_dict()
+
+        similar_bcg_index = self.dl.index_similar_countries['Corrected BCG Index'][:-1]
+        normalized_similar_bcg_index_df = similar_bcg_index / max(similar_bcg_index)
+        self.index_similar_countries_dict = normalized_similar_bcg_index_df.to_dict()
+
+    def create_vodka_indices(self) -> None:
+        """
+        Create vodka indices by loading data from vodka_consumption.csv and normalizing
+        the values.
+        """
+        df = self.dl.index_similar_countries
+        if self.take_log_of_vodka:
+            df['vodka_consumption'] = np.log2(df['vodka_consumption'])
+        df_normalized = (df - df.min()) / (df.max() - df.min())
+        self.index_similar_countries_dict = list(df_normalized.to_dict().values())[0]
+
+    def create_stringency_indices(self) -> None:
+        """
+        Create stringency indices by loading data from OxCGRT_stringency.csv
+        """
+        df = self.dl.index_all_countries
+        index_creator = StringencyIndexCreator(
+            deaths_data=self.dl.time_series_data['deaths'],
+            stringency_data=df
+        )
+        index_creator.run()
+
+        values = list(index_creator.final_indices.values())
+        min_val = min(values)
+        max_val = max(values)
+
+        self.index_similar_countries_dict = \
+            {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}

@@ -1,0 +1,58 @@
+import numpy as np
+import pandas as pd
+
+
+class StringencyIndexCreator:
+    def __init__(self, deaths_data: pd.DataFrame, stringency_data: pd.DataFrame):
+        self.deaths_data = self.preprocess_deaths_data(deaths_data=deaths_data)
+        self.stringency_data = self.preprocess_stringency_dataframe(stringency_data=stringency_data)
+
+        self.final_indices = dict()
+
+    def run(self) -> None:
+        self.filter_common_countries()
+
+        self.get_date_differences()
+
+    @staticmethod
+    def preprocess_deaths_data(deaths_data: pd.DataFrame) -> pd.DataFrame:
+        deaths_data.index = (
+            pd.date_range('2020-01-22', periods=len(deaths_data), freq='D'))
+
+        return deaths_data
+
+    @staticmethod
+    def preprocess_stringency_dataframe(stringency_data: pd.DataFrame) -> pd.DataFrame:
+        df = stringency_data.T[6:-59]
+        df = df.loc[:, ~df.columns.duplicated(keep=False)]
+        df.index = (
+            pd.date_range('2020-01-01', periods=len(df), freq='D'))
+        df = df.apply(pd.to_numeric, errors='coerce')
+
+        return df
+
+    def filter_common_countries(self) -> None:
+        countries = set(self.deaths_data.columns)
+        countries_2 = set(self.stringency_data.columns)
+
+        countries_inter = list(countries.intersection(countries_2))
+
+        self.deaths_data = self.deaths_data[countries_inter]
+        self.stringency_data = self.stringency_data[countries_inter]
+
+    def get_date_differences(self) -> None:
+        for country in self.stringency_data.columns:
+            country_stringency = self.stringency_data[country]
+            stringency_threshold_date = country_stringency[country_stringency >= 50].index.min()
+
+            country_deaths = self.deaths_data[country]
+            deaths_threshold_date = country_deaths[country_deaths >= 10].index.min()
+
+            day_diff = (
+                (pd.to_datetime(deaths_threshold_date) - pd.to_datetime(stringency_threshold_date)).days
+            )
+
+            if day_diff is np.nan:
+                continue
+
+            self.final_indices[country] = day_diff

@@ -99,7 +99,7 @@ class DataLoader:
                 index_col=[0]
             )
         elif self.index_type == 'stringency':
-            self.index_similar_countries = pd.read_csv(
+            self.index_all_countries = pd.read_csv(
                 os.path.join(self.data_folder_path, stringency_name),
                 index_col=[1]
             )
