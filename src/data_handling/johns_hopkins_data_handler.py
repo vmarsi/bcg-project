@@ -162,7 +162,8 @@ class JohnsHopkinsDataHandler:
         df = self.dl.index_all_countries
         index_creator = StringencyIndexCreator(
             deaths_data=self.dl.time_series_data['deaths'],
-            stringency_data=df
+            stringency_data=df,
+            meta_data=self.dl.meta_data
         )
         index_creator.run()
 

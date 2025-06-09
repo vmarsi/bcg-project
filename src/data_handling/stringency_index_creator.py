@@ -3,9 +3,11 @@ import pandas as pd
 
 
 class StringencyIndexCreator:
-    def __init__(self, deaths_data: pd.DataFrame, stringency_data: pd.DataFrame):
+    def __init__(self, deaths_data: pd.DataFrame, stringency_data: pd.DataFrame,
+                 meta_data: pd.DataFrame):
         self.deaths_data = self.preprocess_deaths_data(deaths_data=deaths_data)
         self.stringency_data = self.preprocess_stringency_dataframe(stringency_data=stringency_data)
+        self.meta_data = meta_data
 
         self.final_indices = dict()
 
@@ -34,8 +36,11 @@ class StringencyIndexCreator:
     def filter_common_countries(self) -> None:
         countries = set(self.deaths_data.columns)
         countries_2 = set(self.stringency_data.columns)
+        countries_3 = set(self.meta_data.index)
+        countries_3.remove('Eritrea')
 
-        countries_inter = list(countries.intersection(countries_2))
+        countries_inter_1 = countries.intersection(countries_2)
+        countries_inter = list(countries_inter_1.intersection(countries_3))
 
         self.deaths_data = self.deaths_data[countries_inter]
         self.stringency_data = self.stringency_data[countries_inter]
