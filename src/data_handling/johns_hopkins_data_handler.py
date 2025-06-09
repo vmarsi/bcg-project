@@ -11,16 +11,20 @@ class JohnsHopkinsDataHandler:
     Class for preprocessing the Johns Hopkins data.
     """
     def __init__(self, dl: DataLoader,
-                 take_log_of_vodka: bool = False, stringency_date: str = None):
+                 take_log_of_vodka: bool = False, stringency_date: str = None,
+                 stringency_similar_only: bool = None):
         """
         Constructor.
         :param DataLoader dl: a DataLoader instance
         :param bool take_log_of_vodka: whether to take the logarithm of the vodka indices or not
         :param str stringency_date: stringency indices are extracted from this date
+        :param bool stringency_similar_only: True if only similar countries should be considered
+        while creating stringency indices, False otherwise
         """
         self.dl = dl
         self.take_log_of_vodka = take_log_of_vodka
         self.stringency_date = stringency_date
+        self.stringency_similar_only = stringency_similar_only
 
         self.deaths_df = pd.DataFrame()
 
@@ -163,7 +167,8 @@ class JohnsHopkinsDataHandler:
         index_creator = StringencyIndexCreator(
             deaths_data=self.dl.time_series_data['deaths'],
             stringency_data=df,
-            meta_data=self.dl.meta_data
+            meta_data=self.dl.meta_data,
+            similar_only=self.stringency_similar_only
         )
         index_creator.run()
 
@@ -171,5 +176,9 @@ class JohnsHopkinsDataHandler:
         min_val = min(values)
         max_val = max(values)
 
-        self.index_all_countries_dict = \
-            {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}
+        if not self.stringency_similar_only:
+            self.index_all_countries_dict = \
+                {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}
+        else:
+            self.index_similar_countries_dict = \
+                {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}
