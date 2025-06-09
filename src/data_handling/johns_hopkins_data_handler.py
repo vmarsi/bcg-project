@@ -170,5 +170,5 @@ class JohnsHopkinsDataHandler:
         min_val = min(values)
         max_val = max(values)
 
-        self.index_similar_countries_dict = \
+        self.index_all_countries_dict = \
             {k: (v - min_val) / (max_val - min_val) for k, v in index_creator.final_indices.items()}
