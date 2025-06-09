@@ -11,19 +11,17 @@ class JohnsHopkinsDataHandler:
     Class for preprocessing the Johns Hopkins data.
     """
     def __init__(self, dl: DataLoader,
-                 take_log_of_vodka: bool = False, stringency_date: str = None,
+                 take_log_of_vodka: bool = False,
                  stringency_similar_only: bool = None):
         """
         Constructor.
         :param DataLoader dl: a DataLoader instance
         :param bool take_log_of_vodka: whether to take the logarithm of the vodka indices or not
-        :param str stringency_date: stringency indices are extracted from this date
         :param bool stringency_similar_only: True if only similar countries should be considered
         while creating stringency indices, False otherwise
         """
         self.dl = dl
         self.take_log_of_vodka = take_log_of_vodka
-        self.stringency_date = stringency_date
         self.stringency_similar_only = stringency_similar_only
 
         self.deaths_df = pd.DataFrame()
