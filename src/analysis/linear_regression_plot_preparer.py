@@ -93,13 +93,18 @@ class LinearRegressionPlotPreparer:
 
     def filter_data(self) -> pd.DataFrame:
         """
-        Filters the dataframe containing the time series for only those countries that
-        are in the list of keys of self.index.
+        Filters the indices and the dataframe containing the time series for only common countries.
         :return pd.DataFrame: the filtered dataframe
         """
-        countries_with_index = list(self.index.keys())
+        countries_with_mortality_data = set(self.deaths_df.columns)
 
-        return self.deaths_df[countries_with_index]
+        countries_with_index = set(self.index.keys())
+
+        common = countries_with_mortality_data.intersection(countries_with_index)
+
+        self.index = {c: self.index[c] for c in common if c in self.index}
+
+        return self.deaths_df[common]
 
     def get_y_coordinates(self, data: pd.DataFrame,
                           days_after_alignment: int = None,
