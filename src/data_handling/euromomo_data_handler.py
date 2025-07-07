@@ -9,12 +9,16 @@ class EUROMOMODataHandler:
     """
     Class for preprocessing EUROMOMO data (excess deaths).
     """
-    def __init__(self, dl: DataLoader):
+    def __init__(self, dl: DataLoader, get_only_a_few_countries: bool = True):
         """
         Constructor.
         :param DataLoader dl: a DataLoader instance
+        :param bool get_only_a_few_countries: True if we wish to extract data for recreating figure 3
+        from the study by Miller et al. False if we wish to study all countries for which we have both
+        excess deaths data and a vodka index.
         """
         self.dl = dl
+        self.get_only_a_few_countries = get_only_a_few_countries
 
         self.data_if = DataInterface()
 
@@ -26,14 +30,20 @@ class EUROMOMODataHandler:
 
         self.data_if.deaths_df = self.get_excess_deaths_df(studied_countries=studied_countries)
 
-    @staticmethod
-    def get_studied_countries() -> list:
+    def get_studied_countries(self) -> list:
         """
         Only the following countries' excess deaths are studied.
         :return list: studied countries
         """
-        return ['Greece', 'Estonia', 'Ireland', 'Portugal', 'Hungary',
-                'Belgium', 'Italy', 'Netherlands']
+        if self.get_only_a_few_countries:
+            countries = ['Greece', 'Estonia', 'Ireland', 'Portugal', 'Hungary',
+                         'Belgium', 'Italy', 'Netherlands']
+        else:
+            countries = ['Germany', 'Norway', 'Italy', 'Netherlands', 'Hungary', 'Greece',
+                         'Switzerland', 'Sweden', 'Belgium', 'Finland', 'Portugal',
+                         'Ireland', 'Denmark', 'Israel', 'Austria']
+
+        return countries
 
     def get_excess_deaths_df(self, studied_countries: list) -> pd.DataFrame:
         """
