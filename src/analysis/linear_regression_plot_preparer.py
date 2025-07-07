@@ -100,7 +100,7 @@ class LinearRegressionPlotPreparer:
 
         countries_with_index = set(self.index.keys())
 
-        common = countries_with_mortality_data.intersection(countries_with_index)
+        common = list(countries_with_mortality_data.intersection(countries_with_index))
 
         self.index = {c: self.index[c] for c in common if c in self.index}
 
