@@ -12,17 +12,21 @@ class JohnsHopkinsDataHandler:
     """
     def __init__(self, dl: DataLoader,
                  take_log_of_vodka: bool = False,
-                 stringency_similar_only: bool = None):
+                 stringency_similar_only: bool = None,
+                 stringency_remove_italy: bool = False):
         """
         Constructor.
         :param DataLoader dl: a DataLoader instance
         :param bool take_log_of_vodka: whether to take the logarithm of the vodka indices or not
         :param bool stringency_similar_only: True if only similar countries should be considered
         while creating stringency indices, False otherwise
+        :param bool stringency_remove_italy: Italy is an outlier. We wish to disregard it in some
+        cases
         """
         self.dl = dl
         self.take_log_of_vodka = take_log_of_vodka
         self.stringency_similar_only = stringency_similar_only
+        self.stringency_remove_italy = stringency_remove_italy
 
         self.deaths_df = pd.DataFrame()
 
@@ -172,7 +176,8 @@ class JohnsHopkinsDataHandler:
             deaths_data=self.dl.time_series_data['deaths'],
             stringency_data=df,
             meta_data=self.dl.meta_data,
-            similar_only=self.stringency_similar_only
+            similar_only=self.stringency_similar_only,
+            remove_italy=self.stringency_remove_italy
         )
         index_creator.run()
 

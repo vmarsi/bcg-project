@@ -16,7 +16,7 @@ class StringencyIndexCreator:
         :param bool similar_only: True if only similar countries should be considered
         while creating stringency indices, False otherwise
         :param bool remove_italy: Italy is an outlier. We wish to disregard it in some
-        cases.
+        cases
         """
         self.deaths_data = self.preprocess_deaths_data(deaths_data=deaths_data)
         self.stringency_data = self.preprocess_stringency_dataframe(stringency_data=stringency_data)
