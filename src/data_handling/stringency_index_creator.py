@@ -7,7 +7,7 @@ class StringencyIndexCreator:
     Class for creating the indices based on stringency.
     """
     def __init__(self, deaths_data: pd.DataFrame, stringency_data: pd.DataFrame,
-                 meta_data: pd.DataFrame, similar_only: bool):
+                 meta_data: pd.DataFrame, similar_only: bool, remove_italy: bool = False):
         """
         Constructor.
         :param pd.DataFrame deaths_data: dataframe containing mortality data
@@ -15,11 +15,14 @@ class StringencyIndexCreator:
         :param pd.DataFrame meta_data: dataframe containing metadata
         :param bool similar_only: True if only similar countries should be considered
         while creating stringency indices, False otherwise
+        :param bool remove_italy: Italy is an outlier. We wish to disregard it in some
+        cases.
         """
         self.deaths_data = self.preprocess_deaths_data(deaths_data=deaths_data)
         self.stringency_data = self.preprocess_stringency_dataframe(stringency_data=stringency_data)
         self.meta_data = meta_data
         self.similar_only = similar_only
+        self.remove_italy = remove_italy
 
         self.final_indices = dict()
 
@@ -83,6 +86,8 @@ class StringencyIndexCreator:
                 'Portugal', 'Denmark', 'Poland', 'Norway', 'Hungary' ,'Bulgaria',
                 'Finland', 'Ukraine', 'Lithuania'
             ]
+            if self.remove_italy:
+                countries_inter.remove('Italy')
 
         return countries_inter
 
