@@ -12,7 +12,8 @@ class DataLoader:
         """
         Constructor.
         :param str data_folder_path: path of the data folder
-        :param str dataset_origin: 'who', 'johns_hopkins', 'euromomo' or 'rki'
+        :param str dataset_origin: origin of the mortality data,
+        can be 'who', 'johns_hopkins', 'euromomo' or 'rki'
         :param str index_type: 'BCG', 'vodka' or 'stringency'
         """
         self.data_folder_path = data_folder_path

@@ -4,7 +4,7 @@ import pandas as pd
 
 class StringencyIndexCreator:
     """
-    Class for creating the indices based on stringency.
+    Class for creating the intervention speed indices (indices based on stringency).
     """
     def __init__(self, deaths_data: pd.DataFrame, stringency_data: pd.DataFrame,
                  meta_data: pd.DataFrame, similar_only: bool, remove_italy: bool = False):

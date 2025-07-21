@@ -3,7 +3,7 @@ import pandas as pd
 
 class DataInterface:
     """
-    Class for storing data created in DataHandler.
+    Class for storing data created in a data handler class.
     """
     def __init__(self, data: dict = None):
         """

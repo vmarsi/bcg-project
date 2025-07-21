@@ -23,7 +23,7 @@ class WHODataHandler:
     def run(self) -> None:
         """
         Run function. Selects countries for which we have all necessary information, gets two
-        dataframes, one containing cases data, the other containing deaths data.
+        dataframes: one containing cases data, the other containing deaths data.
         """
         self.dl.meta_data.rename(index={'Russia': 'Russian Federation', 'Turkey': 'Türkiye'}, inplace=True)
 
@@ -69,7 +69,7 @@ class WHODataHandler:
 
     def get_df(self, countries_inter: list, data_type: str) -> pd.DataFrame:
         """
-        Gets the normalized dataframe. Indices are dates and columns are countries.
+        Creates the normalized dataframe. Indices are dates and columns are countries.
         :param list countries_inter: countries for which we have all necessary data
         :param str data_type: either 'cases' or 'deaths'
         :return pd.DataFrame: the desired dataframe
