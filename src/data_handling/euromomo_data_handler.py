@@ -47,9 +47,9 @@ class EUROMOMODataHandler:
 
     def get_excess_deaths_df(self, studied_countries: list) -> pd.DataFrame:
         """
-        Gets the excess deaths dataframe. Indices are weeks and columns are countries.
-        Indices are in the form YYYY-WW, which represents the WW-th week of YYYY. For example
-        2020-05 is the fifth week of 2020.
+        Creates the excess deaths dataframe. Indices are weeks and columns are countries.
+        Indices are in the form YYYY-WW, which represents the WW-th week of the year YYYY.
+        For example 2020-05 is the fifth week of 2020.
         :param list studied_countries: list of studied countries
         :return pd.DataFrame: excess deaths dataframe
         """

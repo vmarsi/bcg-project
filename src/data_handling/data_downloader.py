@@ -7,7 +7,7 @@ from src import PROJECT_PATH
 
 class DataDownloader:
     """
-    Class for downloading all necessary data.
+    Class for downloading all necessary data. The GDrive link can be found in the README file.
     """
     def __init__(self,
                  folder_link: str = '',

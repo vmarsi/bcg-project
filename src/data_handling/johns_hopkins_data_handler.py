@@ -37,8 +37,8 @@ class JohnsHopkinsDataHandler:
 
     def run(self) -> None:
         """
-        Run function. Selects countries for which we have all necessary information, gets two
-        dataframes, one containing cases data, the other containing deaths data.
+        Run function. Selects countries for which we have all the necessary information, gets two
+        dataframes: one containing cases data, the other containing deaths data.
         """
         self.preprocess_df()
 
